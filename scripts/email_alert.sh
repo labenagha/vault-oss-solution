@@ -33,4 +33,4 @@ EOF
 email_smtp
 
 echo ********** sending email **************
-echo "${email_body_content}" | mail -s "${email_subject}" ${receipent_email}@${hostname}
+echo "${email_body_content}" | mail -s "${email_subject}" "${receipent_email}"

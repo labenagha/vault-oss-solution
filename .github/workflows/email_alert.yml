@@ -20,5 +20,5 @@ jobs:
       - name: Install and Send Email
         run: |
           sudo chmod +x email_alert.sh
-          sudo bash email_alert.sh "smtp.gmail.com" "gmail.com" "${{ secrets.AuthUser }}" "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "lbenagha@gmail.com"
+          sudo bash email_alert.sh "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "lbenagha@gmail.com"
         working-directory: ./scripts

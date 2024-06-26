@@ -2,13 +2,11 @@
 set -x
 set -e
 
-mailhub=$1
-hostname=$2
-AuthUser=$3
-AuthPass=$4
-email_body_content=$5
-email_subject=$6
-receipent_email=$7
+
+AuthPass=$1
+email_body_content=$2
+email_subject=$3
+receipent_email=$4
 
 sudo apt update -y
 
@@ -21,9 +19,9 @@ fi
 email_smtp() {
     sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
 root=postmaster
-mailhub=${mailhub}:587
-hostname=${hostname}
-AuthUser=${AuthUser}
+mailhub=smtp.gmail.com:587
+hostname=gmail.com
+AuthUser=lbenagha@gmail.com
 AuthPass=${AuthPass}
 FromLineOverride=YES
 UseSTARTTLS=YES

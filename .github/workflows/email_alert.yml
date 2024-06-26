@@ -12,12 +12,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: list
         run: ls -l   
       - name: Install and Send Email
         run: |
-            sudo bash scripts/email_alert.sh.sh 
+            sudo bash scripts/email_alert.sh
         env:
           mailhub: "smtp.gmail.com" 
           hostname: "gmail.com" 

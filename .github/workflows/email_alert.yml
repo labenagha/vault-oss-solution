@@ -2,6 +2,8 @@ name: Send Email via SMTP
 
 on: [push]
 
+env:
+  workdir: "scripts/"
 jobs:
   send_email:
     runs-on: ubuntu-latest
@@ -11,9 +13,9 @@ jobs:
         uses: actions/checkout@v2 
 
       - name: list dir
-        run: cd scripts && ls -l
+        run: cd ${{ env.workdir }} && ls -l
 
       - name: Install and Send Email
         run: |
-          sudo chmod +x scripts/email_alert.sh
-          sudo bash scripts/email_alert.sh "smtp.gmail.com" "gmail.com" "${{ secrets.AuthUser }}" "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "${{ secrets.AuthUser }}"
+          cd ${{ env.workdir }} && sudo chmod +x email_alert.sh
+          cd ${{ env.workdir }} && sudo bash email_alert.sh "smtp.gmail.com" "gmail.com" "${{ secrets.AuthUser }}" "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "${{ secrets.AuthUser }}"

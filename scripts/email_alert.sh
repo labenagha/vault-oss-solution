@@ -25,7 +25,7 @@ AuthUser=lbenagha@gmail.com
 AuthPass=${AuthPass}
 FromLineOverride=YES
 rewriteDomain=gmail.com
-UseSTARTTLS=No
+UseSTARTTLS=YES
 EOF
 }
 email_smtp

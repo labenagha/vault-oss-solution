@@ -27,7 +27,6 @@ FromLineOverride=YES
 rewriteDomain=gmail.com
 UseSTARTTLS=YES
 UseTLS=No
-AuthMethod=LOGIN
 EOF
 }
 email_smtp

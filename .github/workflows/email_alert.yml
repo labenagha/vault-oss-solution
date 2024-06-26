@@ -12,8 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2 
 
-      - name: list dir
-        run: cd ${{ env.workdir }} && ls -l
+      - name: Check current directory and list files
+        run: |
+            pwd
+            ls -l
 
       - name: Install and Send Email
         run: |

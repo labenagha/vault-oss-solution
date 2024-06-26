@@ -10,8 +10,11 @@ email_subject=$6
 receipent_email=$7
 
 smtp_install() {
-    sudo apt update
-    sudo apt install ssmtp mailutils -y
+    sudo apt update -y
+    if ! sudo apt-get install ssmtp mailutils -y; then
+        echo "Failed to install ssmtp and mailutils."
+        exit 1
+    fi
 }
 
 email_smtp() {

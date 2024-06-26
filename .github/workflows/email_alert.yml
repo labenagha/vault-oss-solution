@@ -1,0 +1,26 @@
+name: Send Email via SMTP
+
+on: [push]
+
+env:
+    AuthUser: "${{ secrets.AuthUser }}"
+    AuthPass: "${{ secrets.AuthPass }}"
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+    environment: email_credentials
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Install and Send Email
+        run: |
+            sudo bash scripts/email_alert.sh.sh 
+        env:
+          mailhub: "smtp.gmail.com" 
+          hostname: "gmail.com" 
+          AuthUser: "${{ env.AuthUser }}"
+          AuthPass: "${{ env.AuthPass }}"
+          email_body_content: "Hello, this is the body of the email." 
+          email_subject: "Email Subject" 
+          receipent_email: "recipient" 

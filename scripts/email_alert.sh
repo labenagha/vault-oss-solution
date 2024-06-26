@@ -18,13 +18,13 @@ fi
 
 email_smtp() {
     sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
-SERVER=tsrlearning1@gmail.com
-mailhub=smtp.gmail.com:587
-hostname=gmail.com
-AuthUser=tsrlearning1@gmail.com
+SERVER=lbenagha@yahoo.com
+mailhub=smtp.yahoo.com:587
+hostname=yahoo.com
+AuthUser=lbenagha@yahoo.com
 AuthPass=${AuthPass}
 FromLineOverride=YES
-rewriteDomain=gmail.com
+rewriteDomain=yahoo.com
 UseSTARTTLS=YES
 UseTLS=YES
 AuthMethod=LOGIN
@@ -35,5 +35,5 @@ email_smtp
 cat /etc/ssmtp/ssmtp.conf
 
 echo ********** sending email **************
-# echo -e "To: ${receipent_email}\nFrom: tsrlearning1@gmail.com\nSubject: ${email_subject}\n\n${email_body_content}" | ssmtp ${receipent_email}
-echo -e '${email_subject}' | sendmail -v labenagha@gmail.com
+# echo -e "To: ${receipent_email}\nFrom: lbenagha@yahoo.com\nSubject: ${email_subject}\n\n${email_body_content}" | ssmtp ${receipent_email}
+echo -e '${email_subject}' | sendmail -v labenagha@yahoo.com

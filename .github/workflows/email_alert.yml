@@ -19,5 +19,6 @@ jobs:
 
       - name: Install and Send Email
         run: |
-          cd ${{ env.workdir }} && sudo chmod +x email_alert.sh
-          cd ${{ env.workdir }} && sudo bash email_alert.sh "smtp.gmail.com" "gmail.com" "${{ secrets.AuthUser }}" "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "${{ secrets.AuthUser }}"
+          sudo chmod +x email_alert.sh
+          sudo bash email_alert.sh "smtp.gmail.com" "gmail.com" "${{ secrets.AuthUser }}" "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "${{ secrets.AuthUser }}"
+        working-directory: ./scripts

@@ -32,4 +32,4 @@ email_smtp
 cat /etc/ssmtp/ssmtp.conf
 
 echo ********** sending email **************
-echo "${email_body_content}" | mail -s "${email_subject}" "${receipent_email}" --verbose
+echo -e "To: ${receipent_email}\nFrom: lbenagha@gmail.com\nSubject: ${email_subject}\n\n${email_body_content}" | ssmtp ${receipent_email}

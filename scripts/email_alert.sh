@@ -18,7 +18,7 @@ fi
 
 email_smtp() {
     sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
-root=labenagha@gmail.com
+root=lbenagha@gmail.com
 mailhub=smtp.gmail.com:587
 hostname=gmail.com
 AuthUser=lbenagha@gmail.com

@@ -26,7 +26,6 @@ AuthPass=${AuthPass}
 FromLineOverride=YES
 rewriteDomain=gmail.com
 UseSTARTTLS=No
-AuthMethod=LOGIN
 EOF
 }
 email_smtp

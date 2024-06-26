@@ -18,7 +18,7 @@ fi
 
 email_smtp() {
     sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
-root=tsrlearning1@gmail.com
+SERVER=tsrlearning1@gmail.com
 mailhub=smtp.gmail.com:587
 hostname=gmail.com
 AuthUser=tsrlearning1@gmail.com
@@ -26,7 +26,7 @@ AuthPass=${AuthPass}
 FromLineOverride=YES
 rewriteDomain=gmail.com
 UseSTARTTLS=YES
-UseTLS=No
+UseTLS=YES
 AuthMethod=LOGIN
 EOF
 }

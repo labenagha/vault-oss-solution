@@ -36,4 +36,4 @@ cat /etc/ssmtp/ssmtp.conf
 
 echo ********** sending email **************
 # echo -e "To: ${receipent_email}\nFrom: lbenagha@yahoo.com\nSubject: ${email_subject}\n\n${email_body_content}" | ssmtp ${receipent_email}
-echo -e '${email_subject}' | sendmail -v labenagha@yahoo.com
+echo -e '${email_subject}' | sendmail -v lbenagha@yahoo.com

@@ -16,19 +16,15 @@ if ! sudo apt-get install ssmtp mailutils -y; then
 fi
 
 
-email_smtp() {
-    sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
-root=postmaster
-mailhub=smtp.gmail.com:587
-hostname=gmail.com
-AuthUser=lbenagha@gmail.com
-AuthPass=${AuthPass}
-FromLineOverride=YES
-UseSTARTTLS=YES
+sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
+    root=postmaster
+    mailhub=smtp.gmail.com:587
+    hostname=gmail.com
+    AuthUser=lbenagha@gmail.com
+    AuthPass=${AuthPass}
+    FromLineOverride=YES
+    UseSTARTTLS=YES
 EOF
-}
-
-email_smtp
 
 echo ********** sending email **************
 echo "${email_body_content}" | mail -s "${email_subject}" "${receipent_email}"

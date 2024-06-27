@@ -6,8 +6,10 @@ USER="ubuntu"
 AuthPass=$1
 receipent_email=$2
 email_subject=$3
+email_body_file=$4
+sender_email=$5
+
 email_body_content=$(cat "$email_body_file")
-sender_email=$4
 
 sudo apt update -y
 

@@ -13,7 +13,7 @@ env:
   receipent_email:  "lbenagha@gmail.com"
   TF_VAR_content: "${{ github.workspace }}/emails/successful_emailsend.txt"
   sender_email: "${{ secrets.sender_email}}"
-  
+
 jobs:
   send_email:
     runs-on: gh-runner-dev-01
@@ -34,6 +34,4 @@ jobs:
           "${{ env.receipent_email }}" \
           "${{ env.email_subject }}" \
           "${{ env.sender_email }}" \
-          "${{ env.email_body_content }}" 
-
         working-directory: ./scripts

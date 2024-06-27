@@ -144,32 +144,32 @@ variable "instance_type" {
 #   default     = true
 # }
 
-# variable "state_bucket_policy_name" {
-#   type = string
-# }
+variable "state_bucket_policy_name" {
+  type = string
+}
 
-# variable "state_bucket_name" {
-#   type = string
-# }
+variable "state_bucket_name" {
+  type = string
+}
 
-# variable "ACCESS_TOKEN" {
-#   description = "GITHUB ACCESS TOKEN Used for authentication fo gh runner install"
-#   type        = string
-# }
+variable "ACCESS_TOKEN" {
+  description = "GITHUB ACCESS TOKEN Used for authentication fo gh runner install"
+  type        = string
+}
 
 variable "public_key" {
   description = "SSH key to be used `rsa` generated"
   type        = string
 }
 
-# variable "RUNNER_VERSION" {
-#   type    = string
-#   default = "2.317.0"
-# }
+variable "RUNNER_VERSION" {
+  type    = string
+  default = "2.317.0"
+}
 
-# variable "RUNNER_SHA" {
-#   type = string
-# }
+variable "RUNNER_SHA" {
+  type = string
+}
 
 
 # variable "min_size" {

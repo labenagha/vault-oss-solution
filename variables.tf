@@ -162,17 +162,11 @@ variable "public_key" {
   type        = string
 }
 
-variable "RUNNER_TAR" {
+variable "RUNNER_VERSION" {
   type    = string
-  default = "./actions-runner-linux-x64-2.317.0.tar.gz"
-}
-
-variable "RUNNER_URL" {
-  type    = string
-  default = "https://github.com/actions/runner/releases/download/v2.317.0/actions-runner-linux-x64-2.317.0.tar.gz"
+  default = "2.317.0"
 }
 
 variable "RUNNER_SHA" {
-  type    = string
-  default = "9e883d210df8c6028aff475475a457d380353f9d01877d51cc01a17b2a91161d"
+  type = string
 }

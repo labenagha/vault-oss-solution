@@ -1,24 +1,33 @@
-# name: Send Email via SMTP
+name: Send Email via SMTP
 
-# on: [push]
+on:
+  push:
+    branches:
+      - main
+      - dev
 
-# env:
-#   workdir: "scripts/"
-# jobs:
-#   send_email:
-#     runs-on: ubuntu-latest
-#     environment: email_credentials
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2 
+env:
+  workdir: "${{ github.workspace }}/scripts"
+  AuthPass: "${{ secrets.AuthPass }}"
+  email_subject:  "Email Automation Log Info"
+  receipent_email:  "lbenagha@gmail.com"
+  email_body_file: "${{ github.workspace }}/emails/succesful_emailsend.txt"
+  sender_email: "${{ secrets.sender_email}}"
+  
+jobs:
+  send_email:
+    runs-on: gh-runner-dev-01
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2 
 
-#       - name: Check current directory and list files
-#         run: |
-#             pwd
-#             ls -l
-
-#       - name: Install and Send Email
-#         run: |
-#           sudo chmod +x email_alert.sh
-#           sudo bash email_alert.sh "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "labenagha@gmail.com"
-#         working-directory: ./scripts
+      - name: Install and Send Email
+        run: |
+          sudo chmod +x email_alert.sh
+          sudo bash email_alert.sh \
+          "${{ env.AuthPass }}" \
+          "${{ env.receipent_email }}" \
+          "${{ env.email_subject }}" \
+          "${{ env.sender_email }}" \
+          "${{ env.email_body_file }}" 
+        working-directory: ./scripts

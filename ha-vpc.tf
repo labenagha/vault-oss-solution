@@ -1,5 +1,5 @@
 module "vpc" {
-  source                  = "git::https://github.com/arerepadelouisbenagha/terraform-vpc-module.git?ref=v2.0.0"
+  source                  = "git::https://github.com/arerepadelouisbenagha/terraform-vpc-module.git?ref=v2.0.1"
   name                    = "ha-dev-vault-vpc"
   security_group_name     = "ha-dev-vault-sg"
   description             = "security for infrastructure"
@@ -18,6 +18,20 @@ module "vpc" {
       to_port     = 22
       protocol    = "tcp"
       cidr_blocks = "143.55.59.117/32"
+    },
+    {
+      description = "GH Runner whitelisting from VPC for smtp emailing"
+      from_port   = 587
+      to_port     = 587
+      protocol    = "tcp"
+      cidr_blocks = "18.209.226.207/32"
+    },
+    {
+      description = "GH Runner whitelisting from VPC for smtp emailing"
+      from_port   = 25
+      to_port     = 25
+      protocol    = "tcp"
+      cidr_blocks = "18.209.226.207/32"
     }
   ]
 
@@ -30,7 +44,8 @@ module "vpc" {
   ]
 
   tags = {
+    Name        = "ha-dev-vault-sg"
     Terraform   = "true"
-    Environment = "dev-vault"
+    Environment = "ha-dev-vault"
   }
 }

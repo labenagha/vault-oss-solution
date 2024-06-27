@@ -1,6 +1,6 @@
 resource "aws_key_pair" "service_key" {
   key_name   = "service-key"
-  public_key = file(var.public_key)
+  public_key = var.public_key
 }
 
 resource "aws_instance" "gh_runner_install" {
@@ -13,7 +13,11 @@ resource "aws_instance" "gh_runner_install" {
   user_data_base64            = base64encode(data.template_file.gh_runner_install.rendered)
 
   root_block_device {
-    volume_size = 10
+    volume_size = 8
+  }
+
+  lifecycle {
+    ignore_changes = [security_groups]
   }
 
   tags = {

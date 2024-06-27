@@ -11,10 +11,7 @@ resource "aws_iam_policy" "terraform_state_management_policy" {
           "s3:GetObject",
           "s3:PutObject"
         ],
-        Resource = [
-          "arn:aws:s3:::my-terraform-state-bucket",
-          "arn:aws:s3:::my-terraform-state-bucket/path/to/my/terraform.tfstate"
-        ]
+        Resource = ["*"]
       },
       {
         Effect = "Allow",
@@ -24,7 +21,7 @@ resource "aws_iam_policy" "terraform_state_management_policy" {
           "dynamodb:DeleteItem",
           "dynamodb:DescribeTable"
         ],
-        Resource = "arn:aws:dynamodb:us-east-1:123456789012:table/terraform-lock-table"
+        Resource = "arn:aws:dynamodb:us-east-1:${data.aws_caller_identity.current.account_id}:table/terraform-lock-table"
       }
     ]
   })

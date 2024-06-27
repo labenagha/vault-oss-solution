@@ -7,11 +7,11 @@ USER="ubuntu"
 REPO_NAME="hcp-vault-oss"
 GITHUB_OWNER="labenagha"
 RUNNER_DIR="/actions-runner"
-RUNNER_URL="${RUNNER_URL}"
-RUNNER_SHA="${RUNNER_SHA}"
-RUNNER_TAR="${RUNNER_TAR}"
+RUNNER_SHA=${RUNNER_SHA}
+RUNNER_VERSION=${RUNNER_VERSION}
+RUNNER_TAR="actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
 GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN}"
-
+RUNNER_URL="https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
 
 function install_dependecies() {
     sudo apt -y update
@@ -23,9 +23,9 @@ mkdir -p "$RUNNER_DIR"
 
 function package_get() {
     cd "$RUNNER_DIR"
-    curl -o actions-runner-linux-x64-2.317.0.tar.gz -L "${RUNNER_URL}"
-    echo "${RUNNER_SHA}  actions-runner-linux-x64-2.317.0.tar.gz" | shasum -a 256 -c
-    tar xzf "${RUNNER_TAR}"
+    curl -o "$RUNNER_TAR" -L "$RUNNER_URL"
+    echo "$RUNNER_SHA  $RUNNER_TAR" | shasum -a 256 -c
+    tar xzf "$RUNNER_TAR"
 }
 package_get
 
@@ -49,8 +49,8 @@ sudo -u $USER bash <<EOF
 cd "$RUNNER_DIR"
     ./config.sh --url https://github.com/$GITHUB_OWNER/hcp-vault-oss --token $RUNNER_TOKEN <<EOL
     Default
-    gh-runner-01
-    self-hosted,Linux,X64,gh-runner-01
+    gh-runner-dev-01
+    self-hosted,Linux,X64,gh-runner-dev-01
     _work
     EOL
 EOF
@@ -61,6 +61,3 @@ function execute() {
     ./svc.sh install && ./svc.sh start
 }
 execute
-
-# Check if the service is running
-sudo systemctl status actions.runner.$GITHUB_OWNER.gh-runner-01.service

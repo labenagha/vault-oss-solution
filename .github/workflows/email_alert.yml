@@ -24,8 +24,7 @@ jobs:
       - name: Check current directory and list files
         run: |
           pwd
-          ls -l ${{ env.workdir }}
-          ls -l "${{ github.workspace }}/emails" && cat "${{ github.workspace }}/emails/successful_emailsend.txt"
+          cd "${{ github.workspace }}/emails" && ls -l
 
       - name: Install and Send Email
         run: |

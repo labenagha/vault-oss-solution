@@ -7,6 +7,7 @@ USER="ubuntu"
 REPO_NAME="hcp-vault-oss"
 GITHUB_OWNER="labenagha"
 RUNNER_DIR="actions-runner"
+RUNNER_SHA=${RUNNER_SHA}
 RUNNER_VERSION=${RUNNER_VERSION}
 RUNNER_TAR="actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
 GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN}"

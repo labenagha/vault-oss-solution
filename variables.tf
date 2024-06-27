@@ -166,3 +166,7 @@ variable "RUNNER_VERSION" {
   type    = string
   default = "2.317.0"
 }
+
+variable "RUNNER_SHA" {
+  type = string
+}

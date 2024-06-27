@@ -20,6 +20,7 @@ data "template_file" "gh_runner_install" {
   template = file("${path.module}/scripts/runner_install.sh")
 
   vars = {
+    RUNNER_SHA          = var.RUNNER_SHA
     RUNNER_VERSION      = var.RUNNER_VERSION
     GITHUB_ACCESS_TOKEN = var.ACCESS_TOKEN
   }

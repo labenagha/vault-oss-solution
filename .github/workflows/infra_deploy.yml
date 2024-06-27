@@ -11,8 +11,9 @@ on:
 
 env:
   work_dir: "${{ github.workspace }}/dev"
-  TF_VAR_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   TF_VAR_public_key: ${{ secrets.PUBLIC_KEY }}
+  TF_var_RUNNER_SHA: ${{ secrets.RUNNER_SHA }}
+  TF_VAR_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:
   deploy:

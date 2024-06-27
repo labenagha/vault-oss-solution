@@ -21,10 +21,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2 
 
-      - name: Check current directory and list files
-        run: |
-          pwd
-          cd "${{ github.workspace }}/emails" && ls -l
+      # - name: Check current directory and list files
+      #   run: |
+      #     pwd
+      #     cd "${{ github.workspace }}/emails"
 
       - name: Install and Send Email
         run: |

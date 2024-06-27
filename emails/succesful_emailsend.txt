@@ -1,14 +1,7 @@
 Hello Customer,
 
 This is to inform you that the email has been sent successfully.
-
-Details:
-- Sender: lbenagha@yahoo.com
-- Recipient: lbenagha@gmail.com
-- Subject: Test Email
-- Timestamp: $(date)
-
 Thank you for using our email service. If you have any questions or need further assistance, please feel free to contact us.
 
 Best regards,
-**TSR Learning**
+TSR Learning

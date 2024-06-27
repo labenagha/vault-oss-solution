@@ -2,7 +2,7 @@
 set -x
 set -e
 
-
+USER="ubuntu"
 AuthPass=$1
 email_body_content=$2
 email_subject=$3
@@ -26,11 +26,17 @@ email_smtp() {
         FromLineOverride=YES
         rewriteDomain=yahoo.com
         UseSTARTTLS=YES
-        UseTLS=YES
         AuthMethod=LOGIN
 EOF
 }
 email_smtp
+
+function permissions() {
+    sudo chmod 777 /etc/ssmtp /etc/ssmtp/*
+    sudo usermod -aG mail $USER
+    # $USER:lbenagha@yahoo.com:mailhub.yahoo.com[:port]
+}
+permissions
 
 cat /etc/ssmtp/ssmtp.conf
 

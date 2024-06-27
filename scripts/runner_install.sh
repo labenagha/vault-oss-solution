@@ -6,11 +6,13 @@ set -e
 USER="ubuntu"
 REPO_NAME="hcp-vault-oss"
 GITHUB_OWNER="labenagha"
-RUNNER_DIR="/actions-runner"
-RUNNER_URL="${RUNNER_URL}"
+RUNNER_DIR="actions-runner"
+RUNNER_VERSION=${RUNNER_VERSION}
 RUNNER_SHA="${RUNNER_SHA}"
-RUNNER_TAR="${RUNNER_TAR}"
+RUNNER_TAR="actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
 GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN}"
+RUNNER_URL="https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
+
 
 function install_dependecies() {
     sudo apt -y update
@@ -22,9 +24,9 @@ mkdir -p "$RUNNER_DIR"
 
 function package_get() {
     cd "$RUNNER_DIR"
-    curl -o actions-runner-linux-x64-2.317.0.tar.gz -L "${RUNNER_URL}"
-    echo "${RUNNER_SHA}  actions-runner-linux-x64-2.317.0.tar.gz" | shasum -a 256 -c
-    tar xzf "${RUNNER_TAR}"
+    curl -o "$RUNNER_TAR" -L "$RUNNER_URL"
+    echo "$RUNNER_SHA  $RUNNER_TAR" | shasum -a 256 -c
+    tar xzf "$RUNNER_TAR"
 }
 package_get
 

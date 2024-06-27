@@ -72,6 +72,12 @@ variable "user_data" {
   default     = null
 }
 
+variable "user_data_vars" {
+  description = "Variables for the user data template"
+  type        = map(string)
+  default     = {}
+}
+
 variable "network_interfaces" {
   description = "Customize network interfaces to be attached at instance boot time"
   type        = list(any)

@@ -17,15 +17,14 @@ launch_template_id          = null      # Set to the existing launch template ID
 create_iam_instance_profile = false     # Set to true if you need to create a new IAM instance profile
 launch_template_version     = "$Latest" # You can set this to a specific version, `$Latest`, or `$Default`
 # iam_instance_profile_arn             = null  # Set the ARN of the existing IAM instance profile if `create_iam_instance_profile` is false
-iam_instance_profile_name       = "ha-dev-iam-instance-profile"
-iam_role_name                   = "ha-dev-iam-role"
-create_launch_template          = true
-launch_template_use_name_prefix = true
-launch_template_description     = "ha-dev launch template description"
-ebs_optimized                   = true
-image_id                        = "ami-04b70fa74e45c3917" # Replace with your AMI ID
-key_name                        = "service-key"           # Replace with your key pair name
-# user_data                            = ""  # Base64 encoded user data script, if any
+iam_instance_profile_name            = "ha-dev-iam-instance-profile"
+iam_role_name                        = "ha-dev-iam-role"
+create_launch_template               = true
+launch_template_use_name_prefix      = true
+launch_template_description          = "ha-dev launch template description"
+ebs_optimized                        = true
+image_id                             = "ami-04b70fa74e45c3917"  # Replace with your AMI ID
+key_name                             = "service-key"            # Replace with your key pair name
 network_interfaces                   = []                       # List of network interfaces configurations
 security_groups                      = ["sg-0904c5d1fde7777ff"] # Replace with your security group IDs
 instance_initiated_shutdown_behavior = "stop"
@@ -57,7 +56,7 @@ desired_capacity                = 2
 desired_capacity_type           = "units"
 min_elb_capacity                = 1
 wait_for_elb_capacity           = 2
-wait_for_capacity_timeout       = "10m"
+wait_for_capacity_timeout       = "2m"
 default_cooldown                = 300
 protect_from_scale_in           = false
 target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/a31224d379a2fa64"]
@@ -93,4 +92,14 @@ scaling_policies = {
       }
     ]
   }
+}
+
+user_data = <<-EOF
+#!/bin/bash
+  sudo apt-get update
+  sudo apt-get install nginx -y
+EOF
+
+user_data_vars = {
+  greeting = "Test Nginx Install"
 }

@@ -226,11 +226,17 @@ variable "protect_from_scale_in" {
   default     = false
 }
 
-# variable "load_balancers" {
-#   description = "A list of elastic load balancer names to add to the autoscaling group names. Only valid for classic load balancers. For ALBs, use `target_group_arns` instead"
-#   type        = list(string)
-#   default     = []
-# }
+variable "user_data" {
+  description = "The Base64-encoded user data to provide when launching the instance"
+  type        = string
+  default     = null
+}
+
+variable "user_data_vars" {
+  description = "Variables for the user data template"
+  type        = map(string)
+  default     = {}
+}
 
 variable "target_group_arns" {
   description = "A set of `aws_alb_target_group` ARNs, for use with Application or Network Load Balancing"

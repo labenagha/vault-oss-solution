@@ -12,7 +12,7 @@ resource "aws_launch_template" "this" {
   ebs_optimized = var.ebs_optimized
   image_id      = var.image_id
   key_name      = var.key_name
-  # user_data     = base64encode(data.template_file.user_data[each.key].rendered)
+  user_data     = base64encode(data.template_file.user_data[each.key].rendered)
 
   vpc_security_group_ids               = length(var.network_interfaces) > 0 ? [] : var.security_groups
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
@@ -122,7 +122,6 @@ resource "aws_autoscaling_group" "this" {
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
   default_cooldown          = var.default_cooldown
   protect_from_scale_in     = var.protect_from_scale_in
-  # load_balancers            = var.load_balancers
   target_group_arns         = var.target_group_arns
   placement_group           = var.placement_group
   health_check_type         = var.health_check_type

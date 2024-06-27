@@ -4,13 +4,12 @@ set -e
 
 USER="ubuntu"
 AuthPass=$1
-email_body_content=$2
+receipent_email=$2
 email_subject=$3
-receipent_email=$4
+email_body_content=$(cat "$email_body_file")
+sender_email=$4
 
 sudo apt update -y
-# sudo aa-disable /etc/apparmor.d/usr.bin.msmtp
-# sudo dpkg-reconfigure msmtp
 
 if ! sudo apt-get install msmtp mailutils -y; then
     echo "Failed to install msmtp and mailutils."
@@ -24,13 +23,13 @@ sudo tee /etc/msmtprc > /dev/null <<EOF
     auth           on
     tls            on
     tls_trust_file /etc/ssl/certs/ca-certificates.crt
-    logfile        ~/.msmtp.log
+    logfile        $HOME/msmtp_logs/msmtp.log
 
     account        yahoo
     host           smtp.mail.yahoo.com
     port           587
-    from           lbenagha@yahoo.com
-    user           lbenagha@yahoo.com
+    from           ${sender_email}
+    user           ${sender_email}
     password       ${AuthPass}
 
     account default : yahoo
@@ -42,4 +41,4 @@ email_smtp
 sudo chmod 600 /etc/msmtprc
 
 # Send the email using msmtp
-echo -e "To: ${receipent_email}\nFrom: lbenagha@yahoo.com\nSubject: ${email_subject}\n\n${email_body_content}" | msmtp --debug --logfile /tmp/msmtp.log --from=lbenagha@yahoo.com ${receipent_email}
+echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1 | tee $HOME/msmtp_logs/msmtp.log

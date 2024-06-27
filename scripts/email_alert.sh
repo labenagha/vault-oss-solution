@@ -2,7 +2,10 @@
 set -x
 set -e
 
+
 USER="ubuntu"
+LOG_DIR="/msmtp_logs"
+
 AuthPass=$1
 receipent_email=$2
 email_subject=$3
@@ -37,8 +40,7 @@ EOF
 }
 email_smtp
 
-LOG_DIR="$HOME/msmtp_logs"
-mkdir -p $HOME/msmtp_logs
+mkdir -p $LOG_DIR
 sudo chown -R $USER:$USER "$LOG_DIR"
 sudo chmod 600 /etc/msmtprc
 

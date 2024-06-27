@@ -11,7 +11,7 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "ha-dev-vault-instance"
+name                        = "ha-dev-vault-service"
 launch_template_name        = "ha-dev-launch-template"
 launch_template_id          = null      # Set to the existing launch template ID if any, otherwise leave as null
 create_iam_instance_profile = false     # Set to true if you need to create a new IAM instance profile

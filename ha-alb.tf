@@ -17,9 +17,9 @@ resource "aws_lb" "ha-dev" {
   }
 }
 
-resource "aws_lb_target_group" "vault_alb_tg" {
-  name        = "hadev-vault-load-balancer-tg"
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = module.vpc.vpc_id[0]
-}
+# resource "aws_lb_target_group" "vault_alb_tg" {
+#   name        = "hadev-vault-load-balancer-tg"
+#   port        = 80
+#   protocol    = "HTTP"
+#   vpc_id      = module.vpc.vpc_id[0]
+# }

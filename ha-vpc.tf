@@ -24,7 +24,7 @@ module "vpc" {
       from_port   = 587
       to_port     = 587
       protocol    = "tcp"
-      cidr_blocks = "3.231.55.220/32"
+      cidr_blocks = "${aws_instance.gh_runner_install.public_ip}/32"
     }
   ]
 

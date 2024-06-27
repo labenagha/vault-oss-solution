@@ -24,7 +24,7 @@ launch_template_use_name_prefix = true
 launch_template_description     = "ha-dev launch template description"
 ebs_optimized                   = true
 image_id                        = "ami-04b70fa74e45c3917" # Replace with your AMI ID
-key_name                        = "ha-dev-key-pair"       # Replace with your key pair name
+key_name                        = "service-key"       # Replace with your key pair name
 # user_data                            = ""  # Base64 encoded user data script, if any
 network_interfaces                   = []                       # List of network interfaces configurations
 security_groups                      = ["sg-0904c5d1fde7777ff"] # Replace with your security group IDs
@@ -39,6 +39,7 @@ metadata_options = { # Replace with your metadata options
   http_protocol_ipv6          = "disabled",
   instance_metadata_tags      = "disabled"
 }
+
 enable_monitoring = true
 tags = {
   Environment = "Dev",
@@ -47,7 +48,7 @@ tags = {
 
 # Autoscaling group specific variables
 ignore_desired_capacity_changes = false
-use_name_prefix                 = true
+use_name_prefix                 = false
 use_mixed_instances_policy      = false
 # availability_zones                   = ["us-east-1a", "us-east-1b"]    
 vpc_zone_identifier       = ["subnet-0078ef2b40c2b7239", "subnet-009590ea08c8b49e4"]

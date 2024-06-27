@@ -23,6 +23,5 @@ data "template_file" "gh_runner_install" {
     RUNNER_SHA          = var.RUNNER_SHA
     RUNNER_VERSION      = var.RUNNER_VERSION
     GITHUB_ACCESS_TOKEN = var.ACCESS_TOKEN
-    filename            = var.content
   }
 }

@@ -170,8 +170,3 @@ variable "RUNNER_VERSION" {
 variable "RUNNER_SHA" {
   type = string
 }
-
-variable "content" {
-  description = "Email body content from a file eg. TXT format"
-  type        = string
-}

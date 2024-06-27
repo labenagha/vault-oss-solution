@@ -1,6 +1,6 @@
 resource "aws_key_pair" "service_key" {
   key_name   = "service-key"
-  public_key = file(var.public_key)
+  public_key = var.public_key
 }
 
 resource "aws_instance" "gh_runner_install" {

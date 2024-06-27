@@ -11,4 +11,4 @@ Details:
 Thank you for using our email service. If you have any questions or need further assistance, please feel free to contact us.
 
 Best regards,
-TSR Learning
+**TSR Learning**

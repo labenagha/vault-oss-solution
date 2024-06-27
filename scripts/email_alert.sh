@@ -25,7 +25,7 @@ sudo tee /etc/msmtprc > /dev/null <<EOF
     auth           on
     tls            on
     tls_trust_file /etc/ssl/certs/ca-certificates.crt
-    logfile        $HOME/msmtp_logs/msmtp.log
+    logfile        $LOG_DIR/msmtp.log
 
     account        yahoo
     host           smtp.mail.yahoo.com
@@ -39,8 +39,9 @@ EOF
 }
 email_smtp
 
+LOG_DIR="$HOME/msmtp_logs"
 mkdir -p $HOME/msmtp_logs
 sudo chmod 600 /etc/msmtprc
 
 # Send the email using msmtp
-echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1 | tee $HOME/msmtp_logs/msmtp.log
+echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1 | sudo tee "$LOG_DIR/msmtp.log"

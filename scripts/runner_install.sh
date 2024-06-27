@@ -49,8 +49,8 @@ sudo -u $USER bash <<EOF
 cd "$RUNNER_DIR"
     ./config.sh --url https://github.com/$GITHUB_OWNER/hcp-vault-oss --token $RUNNER_TOKEN <<EOL
     Default
-    gh-runner-01
-    self-hosted,Linux,X64,gh-runner-01
+    gh-runner-dev-01
+    self-hosted,Linux,X64,gh-runner-dev-01
     _work
     EOL
 EOF

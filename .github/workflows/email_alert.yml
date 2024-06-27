@@ -1,13 +1,16 @@
 name: Send Email via SMTP
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - dev
 
 env:
-  workdir: "scripts/"
+  workdir: "${{ github.workspace }}/scripts"
 jobs:
   send_email:
-    runs-on: ubuntu-latest
-    environment: email_credentials
+    runs-on: gh-runner-dev-01
     steps:
       - name: Checkout code
         uses: actions/checkout@v2 

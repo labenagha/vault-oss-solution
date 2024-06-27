@@ -13,25 +13,26 @@ state_bucket_name        = "ha-vault-dev"
 create                      = true
 name                        = "ha-dev-vault-service"
 launch_template_name        = "ha-dev-launch-template"
-launch_template_id          = null      # Set to the existing launch template ID if any, otherwise leave as null
-create_iam_instance_profile = false     # Set to true if you need to create a new IAM instance profile
-launch_template_version     = "$Latest" # You can set this to a specific version, `$Latest`, or `$Default`
-# iam_instance_profile_arn             = null  # Set the ARN of the existing IAM instance profile if `create_iam_instance_profile` is false
-iam_instance_profile_name            = "ha-dev-iam-instance-profile"
+launch_template_id          = null
+create_iam_instance_profile = false
+
+# You can set this to a specific version, `$Latest`, or `$Default`
+launch_template_version              = "$Latest"
+iam_instance_profile_name            = "ha-dev-iam-instance-asg"
 iam_role_name                        = "ha-dev-iam-role"
 create_launch_template               = true
 launch_template_use_name_prefix      = true
-launch_template_description          = "ha-dev launch template description"
+launch_template_description          = "ha-dev vault launch template description"
 ebs_optimized                        = true
-image_id                             = "ami-04b70fa74e45c3917"  # Replace with your AMI ID
-key_name                             = "service-key"            # Replace with your key pair name
-network_interfaces                   = []                       # List of network interfaces configurations
-security_groups                      = ["sg-0904c5d1fde7777ff"] # Replace with your security group IDs
+image_id                             = "ami-04b70fa74e45c3917"
+key_name                             = "service-key"
+network_interfaces                   = []
+security_groups                      = ["sg-0904c5d1fde7777ff"]
 instance_initiated_shutdown_behavior = "stop"
-block_device_mappings                = []          # List of block device mapping configurations
-instance_type                        = "t3.medium" # Replace with your instance type
+block_device_mappings                = []
+instance_type                        = "t3.medium"
 
-metadata_options = { # Replace with your metadata options
+metadata_options = {
   http_endpoint               = "enabled",
   http_tokens                 = "optional",
   http_put_response_hop_limit = 1,
@@ -45,7 +46,11 @@ tags = {
   Project     = "Vault-OSS"
 }
 
-# Autoscaling group specific variables
+
+#######################################
+##### AutoScaling group ###############
+#######################################
+
 ignore_desired_capacity_changes = false
 use_name_prefix                 = false
 use_mixed_instances_policy      = false

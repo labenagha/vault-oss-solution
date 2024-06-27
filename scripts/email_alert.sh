@@ -10,8 +10,8 @@ AuthPass=$1
 receipent_email=$2
 email_subject=$3
 sender_email=$4
-filename=$5
-email_body_content=$(cat "$filename") 
+email_body_file=$5
+email_body_content=$(<"$email_body_file")
 
 sudo apt update -y
 

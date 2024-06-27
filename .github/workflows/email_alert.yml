@@ -11,7 +11,7 @@ env:
   AuthPass: "${{ secrets.AuthPass }}"
   email_subject:  "Email Automation Log Info"
   receipent_email:  "lbenagha@gmail.com"
-  filename: "${{ github.workspace }}/emails/successful_emailsend.txt"
+  email_body_file: "${{ github.workspace }}/emails/successful_emailsend.txt"
   sender_email: "${{ secrets.sender_email}}"
   
 jobs:
@@ -29,5 +29,5 @@ jobs:
           "${{ env.receipent_email }}" \
           "${{ env.email_subject }}" \
           "${{ env.sender_email }}" \
-          "${{ env.filename }}" 
+          "${{ env.email_body_file }}" 
         working-directory: ./scripts

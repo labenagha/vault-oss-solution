@@ -4,7 +4,7 @@ set -e
 
 
 USER="ubuntu"
-LOG_DIR="/msmtp_logs"
+LOG_DIR="/msmtp_logs/"
 
 AuthPass=$1
 receipent_email=$2

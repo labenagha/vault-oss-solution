@@ -2,7 +2,7 @@ resource "aws_lb" "ha-dev" {
   name                       = "hadev-vault-load-balancer"
   internal                   = false
   load_balancer_type         = "application"
-  security_groups            = [module.vpc.security_group_id]
+  security_groups            = [module.vpc.security_group_id, aws_security_group.load_balancer_sg.id]
   subnets                    = ["subnet-0078ef2b40c2b7239", "subnet-009590ea08c8b49e4"]
   enable_deletion_protection = true
 

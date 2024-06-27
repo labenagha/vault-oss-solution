@@ -1,5 +1,5 @@
 module "vpc" {
-  source                  = "git::https://github.com/arerepadelouisbenagha/terraform-vpc-module.git?ref=v2.0.0"
+  source                  = "git::https://github.com/arerepadelouisbenagha/terraform-vpc-module.git?ref=v2.0.1"
   name                    = "ha-dev-vault-vpc"
   security_group_name     = "ha-dev-vault-sg"
   description             = "security for infrastructure"

@@ -10,36 +10,34 @@ receipent_email=$4
 
 sudo apt update -y
 
-if ! sudo apt-get install ssmtp mailutils -y; then
-    echo "Failed to install ssmtp and mailutils."
+if ! sudo apt-get install msmtp mailutils -y; then
+    echo "Failed to install msmtp and mailutils."
     exit 1
 fi
 
 
 email_smtp() {
-    sudo tee /etc/ssmtp/ssmtp.conf > /dev/null <<EOF
-        SERVER=lbenagha@yahoo.com
-        mailhub=smtp.yahoo.com:587
-        hostname=yahoo.com
-        AuthUser=lbenagha@yahoo.com
-        AuthPass=${AuthPass}
-        FromLineOverride=YES
-        rewriteDomain=yahoo.com
-        UseSTARTTLS=YES
-        AuthMethod=LOGIN
+sudo tee /etc/msmtprc > /dev/null <<EOF
+    defaults
+    auth           on
+    tls            on
+    tls_trust_file /etc/ssl/certs/ca-certificates.crt
+    logfile        ~/.msmtp.log
+
+    account        yahoo
+    host           smtp.mail.yahoo.com
+    port           587
+    from           lbenagha@yahoo.com
+    user           lbenagha@yahoo.com
+    password       ${AuthPass}
+
+    account default : yahoo
 EOF
 }
 email_smtp
 
-function permissions() {
-    sudo chmod 777 /etc/ssmtp /etc/ssmtp/*
-    sudo usermod -aG mail $USER
-    # $USER:lbenagha@yahoo.com:mailhub.yahoo.com[:port]
-}
-permissions
+# Set permissions for msmtprc
+sudo chmod 600 /etc/msmtprc
 
-cat /etc/ssmtp/ssmtp.conf
-
-echo ********** sending email **************
-# echo -e "To: ${receipent_email}\nFrom: lbenagha@yahoo.com\nSubject: ${email_subject}\n\n${email_body_content}" | ssmtp ${receipent_email}
-echo -e "To: ${receipent_email}\nFrom: lbenagha@yahoo.com\nSubject: ${email_subject}\n\n${email_body_content}" | ssmtp ${receipent_email}
+# Send the email using msmtp
+echo -e "To: ${receipent_email}\nFrom: lbenagha@yahoo.com\nSubject: ${email_subject}\n\n${email_body_content}" | msmtp --debug --logfile /tmp/msmtp.log --from=lbenagha@yahoo.com ${receipent_email}

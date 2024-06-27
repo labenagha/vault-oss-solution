@@ -5,15 +5,14 @@ on:
     branches:
       - main
       - dev
-      
     paths:
       - "hcp-vault-oss/**"
       - ".github/workflows/infra_deploy.yml"
 
 env:
-  work_dir: hcp-vault-oss/
-  TF_VAR_ACCESS_TOKEN: "${{ secrets.ACCESS_TOKEN }}"
-  TF_VAR_public_key: "${{ secrets.public_key }}"
+  work_dir: dev
+  TF_VAR_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  TF_VAR_public_key: ${{ secrets.public_key }}
 
 jobs:
   deploy:
@@ -38,12 +37,24 @@ jobs:
 
       - name: Initialize Terraform
         run: terraform init -backend-config "${{ env.work_dir }}/backend.tf" -reconfigure
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Validate Terraform
         run: terraform validate
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Plan Terraform deployment
         run: terraform plan -var-file "${{ env.work_dir }}/terraform.tfvars"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Apply Terraform deployment
         run: terraform apply -var-file "${{ env.work_dir }}/terraform.tfvars" -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

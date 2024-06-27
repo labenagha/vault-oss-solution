@@ -3,5 +3,4 @@ Hello Customer,
 This is to inform you that the email has been sent successfully.
 Thank you for using our email service. If you have any questions or need further assistance, please feel free to contact us.
 
-Best regards,
-TSR Learning
+<p><i>Best regards,<br>TSR Learning</i></p>

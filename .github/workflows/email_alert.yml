@@ -1,5 +1,4 @@
 name: Send Email via SMTP
-
 on:
   push:
     branches:
@@ -20,11 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2 
-
-      # - name: Check current directory and list files
-      #   run: |
-      #     pwd
-      #     cd "${{ github.workspace }}/emails"
 
       - name: Install and Send Email
         run: |

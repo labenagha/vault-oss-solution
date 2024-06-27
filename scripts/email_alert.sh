@@ -26,7 +26,7 @@ sudo tee /etc/msmtprc > /dev/null <<EOF
     auth           on
     tls            on
     tls_trust_file /etc/ssl/certs/ca-certificates.crt
-    logfile        $LOG_DIR/msmtp.log
+    logfile        /msmtp_logs/msmtp.log
 
     account        yahoo
     host           smtp.mail.yahoo.com

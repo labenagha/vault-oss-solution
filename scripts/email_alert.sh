@@ -39,7 +39,7 @@ EOF
 }
 email_smtp
 
-# Set permissions for msmtprc
+mkdir -p $HOME/msmtp_logs
 sudo chmod 600 /etc/msmtprc
 
 # Send the email using msmtp

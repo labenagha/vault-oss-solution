@@ -13,11 +13,11 @@ RUNNER_TAR="actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
 GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN}"
 RUNNER_URL="https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
 
-function apt_install() {
+function install_dependecies() {
     sudo apt -y update
     sudo apt -y install jq
 }
-apt_install
+install_dependecies
 
 mkdir -p "$RUNNER_DIR"
 

@@ -39,7 +39,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
       - name:  lis dir
-        run: ls -l
+        run: pwd && ls -l
       # - name: Initialize Terraform
       #   run: terraform init -backend-config "${{ env.work_dir }}/backend.tf" -reconfigure
       #   env:

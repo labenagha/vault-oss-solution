@@ -8,7 +8,6 @@ on:
     paths:
       - "hcp-vault-oss/**"
       - ".github/workflows/infra_deploy.yml"
-
 env:
   work_dir: "${{ github.workspace }}/dev"
   TF_VAR_public_key: ${{ secrets.PUBLIC_KEY }}

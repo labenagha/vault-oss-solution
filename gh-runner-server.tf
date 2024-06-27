@@ -13,7 +13,7 @@ resource "aws_instance" "gh_runner_install" {
   user_data_base64            = base64encode(data.template_file.gh_runner_install.rendered)
 
   root_block_device {
-    volume_size = 10
+    volume_size = 8
   }
 
   tags = {

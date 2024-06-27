@@ -1,0 +1,47 @@
+name: Infra deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "hcp-vault-oss/**"
+      - ".github/workflows/infra_deploy.yml"
+
+env:
+  work_dir: hcp-vault-oss/
+  TF_VAR_ACCESS_TOKEN: "${{ secrets.ACCESS_TOKEN }}"
+  TF_VAR_public_key: "${{ secrets.public_key }}"
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, gh-runner-01]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.6.5
+
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+
+      - name: Initialize Terraform
+        run: terraform init -backend-config "${{ env.work_dir }}/backend.tf" -reconfigure
+
+      - name: Validate Terraform
+        run: terraform validate
+
+      - name: Plan Terraform deployment
+        run: terraform plan -var-file "${{ env.work_dir }}/terraform.tfvars"
+
+      - name: Apply Terraform deployment
+        run: terraform apply -var-file "${{ env.work_dir }}/terraform.tfvars" -auto-approve

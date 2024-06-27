@@ -1,24 +1,24 @@
-name: Send Email via SMTP
+# name: Send Email via SMTP
 
-on: [push]
+# on: [push]
 
-env:
-  workdir: "scripts/"
-jobs:
-  send_email:
-    runs-on: ubuntu-latest
-    environment: email_credentials
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2 
+# env:
+#   workdir: "scripts/"
+# jobs:
+#   send_email:
+#     runs-on: ubuntu-latest
+#     environment: email_credentials
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2 
 
-      - name: Check current directory and list files
-        run: |
-            pwd
-            ls -l
+#       - name: Check current directory and list files
+#         run: |
+#             pwd
+#             ls -l
 
-      - name: Install and Send Email
-        run: |
-          sudo chmod +x email_alert.sh
-          sudo bash email_alert.sh "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "labenagha@gmail.com"
-        working-directory: ./scripts
+#       - name: Install and Send Email
+#         run: |
+#           sudo chmod +x email_alert.sh
+#           sudo bash email_alert.sh "${{ secrets.AuthPass }}" "Hello, this is the body of the email." "Email Subject" "labenagha@gmail.com"
+#         working-directory: ./scripts

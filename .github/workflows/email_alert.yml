@@ -21,6 +21,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2 
 
+      - name: Check current directory and list files
+        run: |
+          pwd
+          ls -l ${{ env.workdir }}
+          ls -l "${{ github.workspace }}/emails" && cat "${{ github.workspace }}/emails/successful_emailsend.txt"
+
       - name: Install and Send Email
         run: |
           sudo chmod +x email_alert.sh

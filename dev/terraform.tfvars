@@ -30,7 +30,7 @@ network_interfaces                   = []                       # List of networ
 security_groups                      = ["sg-0904c5d1fde7777ff"] # Replace with your security group IDs
 instance_initiated_shutdown_behavior = "stop"
 block_device_mappings                = []         # List of block device mapping configurations
-instance_type                        = "t2.micro" # Replace with your instance type
+instance_type                        = "t3.medium" # Replace with your instance type
 
 metadata_options = { # Replace with your metadata options
   http_endpoint               = "enabled",

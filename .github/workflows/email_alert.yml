@@ -1,4 +1,5 @@
 name: Send Email via SMTP
+
 on:
   push:
     branches:

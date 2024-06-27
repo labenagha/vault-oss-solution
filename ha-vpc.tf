@@ -37,6 +37,7 @@ module "vpc" {
   ]
 
   tags = {
+    Name        = "ha-dev-vault-sg"
     Terraform   = "true"
     Environment = "ha-dev-vault"
   }

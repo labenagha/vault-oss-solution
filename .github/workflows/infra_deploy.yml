@@ -17,8 +17,8 @@ env:
 
 jobs:
   deploy:
-    # runs-on: ubuntu-latest
-    runs-on: gh-runner-01
+    runs-on: ubuntu-latest
+    # runs-on: gh-runner-01
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2

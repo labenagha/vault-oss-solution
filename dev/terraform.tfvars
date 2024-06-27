@@ -11,7 +11,7 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "ha-dev-vault"
+name                        = "ha-dev-vault-instance"
 launch_template_name        = "ha-dev-launch-template"
 launch_template_id          = null      # Set to the existing launch template ID if any, otherwise leave as null
 create_iam_instance_profile = false     # Set to true if you need to create a new IAM instance profile
@@ -61,7 +61,7 @@ wait_for_elb_capacity     = 120
 wait_for_capacity_timeout = "10m"
 default_cooldown          = 300
 protect_from_scale_in     = false
-load_balancers            = []
+# load_balancers            = []
 target_group_arns         = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/f1505d876ca28ab5"]
 placement_group           = null
 health_check_type         = "EC2"

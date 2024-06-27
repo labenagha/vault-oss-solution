@@ -18,6 +18,13 @@ module "vpc" {
       to_port     = 22
       protocol    = "tcp"
       cidr_blocks = "143.55.59.117/32"
+    },
+    {
+      description = "GH Runner whitelisting from VPC for smtp emailing"
+      from_port   = 587
+      to_port     = 587
+      protocol    = "tcp"
+      cidr_blocks = "${aws_instance.gh_runner_install.public_ip}/32"
     }
   ]
 

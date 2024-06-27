@@ -43,3 +43,26 @@ resource "aws_lb_listener" "front_end" {
     target_group_arn = aws_lb_target_group.vault_alb_tg.arn
   }
 }
+
+resource "aws_security_group" "load_balancer_sg" {
+  name   = "load_balancer_sg"
+  vpc_id = module.vpc.vpc_id[0]
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["143.55.59.117/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "load_balancer_sg"
+  }
+}

@@ -26,7 +26,7 @@ module "vpc" {
       protocol    = "tcp"
       cidr_blocks = "18.209.226.207/32"
     },
-        {
+    {
       description = "GH Runner whitelisting from VPC for smtp emailing"
       from_port   = 25
       to_port     = 25

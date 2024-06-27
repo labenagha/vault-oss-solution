@@ -10,7 +10,8 @@ AuthPass=$1
 receipent_email=$2
 email_subject=$3
 sender_email=$4
-email_body_content=$5
+email_body_content=$(cat "$filename") 
+filename=${content}
 
 sudo apt update -y
 
@@ -19,6 +20,9 @@ if ! sudo apt-get install msmtp mailutils -y; then
     exit 1
 fi
 
+mkdir -p $LOG_DIR
+sudo chown -R $USER:$USER "$LOG_DIR"
+sudo chmod 600 /etc/msmtprc
 
 email_smtp() {
 sudo tee /etc/msmtprc > /dev/null <<EOF
@@ -40,9 +44,6 @@ EOF
 }
 email_smtp
 
-mkdir -p $LOG_DIR
-sudo chown -R $USER:$USER "$LOG_DIR"
-sudo chmod 600 /etc/msmtprc
 
 # Send the email using msmtp
 echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_body_content}" | msmtp --debug --from=${sender_email} ${receipent_email}

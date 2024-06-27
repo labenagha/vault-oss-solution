@@ -11,8 +11,9 @@ env:
   AuthPass: "${{ secrets.AuthPass }}"
   email_subject:  "Email Automation Log Info"
   receipent_email:  "lbenagha@gmail.com"
-  email_body_content:  "Test Email"
+  TF_VAR_content: "${{ github.workspace }}/emails/successful_emailsend.txt"
   sender_email: "${{ secrets.sender_email}}"
+  
 jobs:
   send_email:
     runs-on: gh-runner-dev-01

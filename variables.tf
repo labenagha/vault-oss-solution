@@ -157,10 +157,10 @@ variable "instance_type" {
 #   type        = string
 # }
 
-# variable "public_key" {
-#   description = "SSH key to be used `rsa` generated"
-#   type        = string
-# }
+variable "public_key" {
+  description = "SSH key to be used `rsa` generated"
+  type        = string
+}
 
 # variable "RUNNER_VERSION" {
 #   type    = string

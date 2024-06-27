@@ -16,6 +16,10 @@ resource "aws_instance" "gh_runner_install" {
     volume_size = 8
   }
 
+  lifecycle {
+    ignore_changes = [security_groups]
+  }
+
   tags = {
     Name = "gh-runner-01"
   }

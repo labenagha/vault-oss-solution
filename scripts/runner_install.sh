@@ -12,7 +12,6 @@ RUNNER_SHA="${RUNNER_SHA}"
 RUNNER_TAR="${RUNNER_TAR}"
 GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN}"
 
-
 function install_dependecies() {
     sudo apt -y update
     sudo apt -y install jq
@@ -61,6 +60,3 @@ function execute() {
     ./svc.sh install && ./svc.sh start
 }
 execute
-
-# Check if the service is running
-sudo systemctl status actions.runner.$GITHUB_OWNER.gh-runner-01.service

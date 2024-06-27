@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - dev
+      
     paths:
       - "hcp-vault-oss/**"
       - ".github/workflows/infra_deploy.yml"

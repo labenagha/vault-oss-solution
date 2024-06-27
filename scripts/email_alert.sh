@@ -6,10 +6,8 @@ USER="ubuntu"
 AuthPass=$1
 receipent_email=$2
 email_subject=$3
-email_body_file=$4
-sender_email=$5
-
-email_body_content=$(cat "$email_body_file")
+sender_email=$4
+email_body_content=$5
 
 sudo apt update -y
 
@@ -41,7 +39,8 @@ email_smtp
 
 LOG_DIR="$HOME/msmtp_logs"
 mkdir -p $HOME/msmtp_logs
+sudo chown -R $USER:$USER "$LOG_DIR"
 sudo chmod 600 /etc/msmtprc
 
 # Send the email using msmtp
-echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1 | sudo tee "$LOG_DIR/msmtp.log"
+echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1 | tee -a "$LOG_DIR/msmtp.log"

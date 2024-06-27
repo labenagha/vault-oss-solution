@@ -122,7 +122,7 @@ resource "aws_autoscaling_group" "this" {
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
   default_cooldown          = var.default_cooldown
   protect_from_scale_in     = var.protect_from_scale_in
-  load_balancers            = var.load_balancers
+  # load_balancers            = var.load_balancers
   target_group_arns         = var.target_group_arns
   placement_group           = var.placement_group
   health_check_type         = var.health_check_type

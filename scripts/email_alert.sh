@@ -45,4 +45,4 @@ sudo chown -R $USER:$USER "$LOG_DIR"
 sudo chmod 600 /etc/msmtprc
 
 # Send the email using msmtp
-echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1 | tee -a "$LOG_DIR/msmtp.log"
+echo -e "To: ${receipent_email}\nFrom: ${sender_email}\nSubject: ${email_subject}\n\n${email_content}" | msmtp --debug --from=${sender_email} ${receipent_email} 2>&1"

@@ -9,8 +9,8 @@ email_subject=$3
 receipent_email=$4
 
 sudo apt update -y
-sudo aa-disable /etc/apparmor.d/usr.bin.msmtp
-sudo dpkg-reconfigure msmtp
+# sudo aa-disable /etc/apparmor.d/usr.bin.msmtp
+# sudo dpkg-reconfigure msmtp
 
 if ! sudo apt-get install msmtp mailutils -y; then
     echo "Failed to install msmtp and mailutils."

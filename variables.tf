@@ -90,12 +90,6 @@ variable "key_name" {
   default     = null
 }
 
-variable "user_data" {
-  description = "The Base64-encoded user data to provide when launching the instance"
-  type        = string
-  default     = null
-}
-
 variable "network_interfaces" {
   description = "Customize network interfaces to be attached at instance boot time"
   type        = list(any)

@@ -1,4 +1,4 @@
-Hello,
+Hello Customer,
 
 This is to inform you that the email has been sent successfully.
 

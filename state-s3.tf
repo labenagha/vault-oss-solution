@@ -76,3 +76,12 @@ EOF
 }
 
 
+# Consul Bucket
+resource "aws_s3_bucket" "consul" {
+  bucket = "consul-vault-cluster-dev"
+
+  tags = {
+    Name        = "Consul Bucket"
+    Environment = "Dev"
+  }
+}

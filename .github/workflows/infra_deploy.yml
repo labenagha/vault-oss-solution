@@ -1,4 +1,5 @@
 name: Infra deploy
+
 on:
   push:
     branches:
@@ -13,6 +14,8 @@ env:
   TF_VAR_public_key: ${{ secrets.PUBLIC_KEY }}
   TF_VAR_RUNNER_SHA: ${{ secrets.RUNNER_SHA }}
   TF_VAR_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  TF_VAR_tls_cert: ${{ secrets.TLS_CERT }}
+  TF_VAR_tls_key: ${{ secrets.TLS_KEY }}
 
 jobs:
   deploy:

@@ -11,15 +11,15 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "ha-dev-vault-cluster-1"
-launch_template_name        = "ha-dev-launch-template"
+name                        = "vault-dev-cluster-01"
+launch_template_name        = "launch-template-vault-cluster-01"
 launch_template_id          = null
 create_iam_instance_profile = false
 
 # You can set this to a specific version, `$Latest`, or `$Default`
-launch_template_version              = "$Latest"
-iam_instance_profile_name            = "ha-dev-iam-instance-asg"
-iam_role_name                        = "ha-dev-iam-role"
+launch_template_version = "$Latest"
+# iam_instance_profile_name            = "ha-dev-iam-instance-asg"
+# iam_role_name                        = "ha-dev-iam-role"
 create_launch_template               = true
 launch_template_use_name_prefix      = true
 launch_template_description          = "ha-dev vault launch template description"
@@ -64,10 +64,10 @@ wait_for_elb_capacity           = 2
 wait_for_capacity_timeout       = "2m"
 default_cooldown                = 300
 protect_from_scale_in           = false
-target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/a31224d379a2fa64"]
+target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/6d917767a36a61db"]
 placement_group                 = null
-health_check_type               = "EC2"
-health_check_grace_period       = 300
+health_check_type               = "ELB"
+health_check_grace_period       = 120
 force_delete                    = false
 termination_policies            = ["Default"]
 
@@ -80,31 +80,30 @@ instance_maintenance_policy = {
 delete_timeout        = "15m"
 create_scaling_policy = true
 
-scaling_policies = {
-  policy1 = {
-    name                      = "scale-up-policy"
-    adjustment_type           = "ChangeInCapacity"
-    policy_type               = "SimpleScaling"
-    estimated_instance_warmup = 300
-    cooldown                  = 300
-    min_adjustment_magnitude  = 1
-    metric_aggregation_type   = "Average"
-    step_adjustment = [
-      {
-        scaling_adjustment          = 2
-        metric_interval_lower_bound = 0
-        metric_interval_upper_bound = null
-      }
-    ]
-  }
-}
+# scaling_policies = {
+#   policy1 = {
+#     name                      = "scale-up-policy"
+#     adjustment_type           = "ChangeInCapacity"
+#     policy_type               = "StepScaling"
+#     min_adjustment_magnitude  = 1
+#     metric_aggregation_type   = "Average"
 
-user_data = <<-EOF
-#!/bin/bash
-  sudo apt-get update
-  sudo apt-get install nginx -y
-EOF
+#     step_adjustment = [
+#       {
+#         scaling_adjustment          = 1
+#         metric_interval_lower_bound = 1.0
+#         metric_interval_upper_bound = 2.0
+#       }
+#     ]
+#   }
+# }
 
-user_data_vars = {
-  greeting = "Test Nginx Install"
-}
+
+# port              = 8200
+# log_level         = "info"
+# tls_cert          = "../certs/tls-cert.pem"
+# tls_key           = "../certs/tls-key.pem"
+# s3_bucket         = "consul-vault-cluster-dev"
+# s3_bucket_region  = "us-east-1"
+# enable_s3_backend = "true"
+# user              = "vault"

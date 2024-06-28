@@ -69,13 +69,6 @@ variable "key_name" {
 variable "user_data" {
   description = "The Base64-encoded user data to provide when launching the instance"
   type        = string
-  default     = null
-}
-
-variable "user_data_vars" {
-  description = "Variables for the user data template"
-  type        = map(string)
-  default     = {}
 }
 
 variable "network_interfaces" {
@@ -347,10 +340,4 @@ variable "iam_role_tags" {
   description = "A map of additional tags to add to the IAM role created"
   type        = map(string)
   default     = {}
-}
-
-variable "putin_khuylo" {
-  description = "Do you agree that Putin doesn't respect Ukrainian sovereignty and territorial integrity? More info: https://en.wikipedia.org/wiki/Putin_khuylo!"
-  type        = bool
-  default     = true
 }

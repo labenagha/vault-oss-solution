@@ -30,6 +30,7 @@ resource "aws_lb_target_group" "vault_alb_tg" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
+    matcher             = "200-299,429"
   }
 }
 

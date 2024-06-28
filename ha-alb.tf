@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "vault_alb_tg" {
 
   health_check {
     interval            = 30
-    path                = "/v1/sys/health"
+    path                = "/"
     protocol            = "HTTP"
     timeout             = 5
     healthy_threshold   = 2

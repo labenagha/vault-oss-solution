@@ -61,13 +61,13 @@ desired_capacity                = 2
 desired_capacity_type           = "units"
 min_elb_capacity                = 1
 wait_for_elb_capacity           = 2
-wait_for_capacity_timeout       = "5m"
+wait_for_capacity_timeout       = "2m"
 default_cooldown                = 300
 protect_from_scale_in           = false
 target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/6d917767a36a61db"]
 placement_group                 = null
 health_check_type               = "EC2"
-health_check_grace_period       = 300
+health_check_grace_period       = 120
 force_delete                    = false
 termination_policies            = ["Default"]
 

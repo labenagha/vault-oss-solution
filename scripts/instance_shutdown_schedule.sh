@@ -12,10 +12,19 @@ aws configure set aws_secret_access_key "$aws_secret_access_key"
 aws configure set region "$region"
 
 function install_instance() {
-    sudo apt-get install -y zip
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
-    sudo ./aws/install
+    if command -v aws &> /dev/null; then
+        echo "AWS CLI is already installed, updating..."
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install --update
+    else
+        echo "Installing AWS CLI..."
+        sudo apt-get update
+        sudo apt-get install -y unzip
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+    fi
 }
 install_instance
 

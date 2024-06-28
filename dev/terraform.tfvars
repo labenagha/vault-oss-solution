@@ -99,12 +99,15 @@ scaling_policies = {
   }
 }
 
-user_data = <<-EOF
-#!/bin/bash
-  sudo apt-get update
-  sudo apt-get install nginx -y
-EOF
+user_data =" ../scripts/install_vault.sh"
 
 user_data_vars = {
-  greeting = "Test Nginx Install"
+   port             = 8200
+    log_level        = "info"
+    tls_cert         = var.tls_cert
+    tls_key          = var.tls_key
+    s3_bucket        = "consul-vault-cluster-dev"
+    s3_bucket_region = "us-east-1"
+    enable_s3_backend = "true"
+    user             = "vault"
 }

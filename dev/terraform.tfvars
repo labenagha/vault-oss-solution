@@ -84,14 +84,19 @@ scaling_policies = {
   policy1 = {
     name                      = "scale-up-policy"
     adjustment_type           = "ChangeInCapacity"
-    policy_type               = "SimpleScaling"
-    scaling_adjustment        = 2
+    policy_type               = "StepScaling"
+    estimated_instance_warmup = 300
     cooldown                  = 300
-    min_adjustment_magnitude  = 1
     metric_aggregation_type   = "Average"
+    step_adjustment = [
+      {
+        scaling_adjustment          = 2
+        metric_interval_lower_bound = 0
+        metric_interval_upper_bound = null
+      }
+    ]
   }
 }
-
 
 
 # port              = 8200

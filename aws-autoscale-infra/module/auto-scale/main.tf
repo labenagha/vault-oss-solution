@@ -12,7 +12,7 @@ resource "aws_launch_template" "this" {
   ebs_optimized                        = var.ebs_optimized
   image_id                             = var.image_id
   key_name                             = var.key_name
-  user_data                            = base64encode(data.template_file.user_data[0].rendered)
+  user_data                            = var.user_data
   vpc_security_group_ids               = length(var.network_interfaces) > 0 ? [] : var.security_groups
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
 

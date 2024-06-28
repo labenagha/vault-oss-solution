@@ -152,3 +152,6 @@ sudo systemctl daemon-reload
 sudo systemctl enable vault.service
 sudo systemctl restart vault.service || { sudo systemctl status vault.service; exit 1; }
 sudo systemctl status vault.service
+
+export VAULT_ADDR="http://127.0.0.1:8200"
+vault status -tls-skip-verify

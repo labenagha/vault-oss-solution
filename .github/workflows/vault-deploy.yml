@@ -1,5 +1,4 @@
 name: Install Vault
-
 on:
   push:
     branches:

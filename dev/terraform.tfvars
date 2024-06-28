@@ -84,9 +84,10 @@ scaling_policies = {
   policy1 = {
     name                      = "scale-up-policy"
     adjustment_type           = "ChangeInCapacity"
-    policy_type               = "StepScaling"
+    policy_type               = "SimpleScaling"
     estimated_instance_warmup = 300
     cooldown                  = 300
+    min_adjustment_magnitude  = 1
     metric_aggregation_type   = "Average"
     step_adjustment = [
       {

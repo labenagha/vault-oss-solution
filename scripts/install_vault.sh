@@ -151,3 +151,4 @@ sudo cat $SYSTEMD_CONFIG_PATH
 sudo systemctl daemon-reload
 sudo systemctl enable vault.service
 sudo systemctl restart vault.service || { sudo systemctl status vault.service; exit 1; }
+sudo systemctl status vault.service

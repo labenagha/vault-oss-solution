@@ -1,4 +1,5 @@
 name: Install Vault
+
 on:
   push:
     branches:
@@ -40,4 +41,3 @@ jobs:
           VAULT_ADDR: https://localhost:8200
         working-directory: ./scripts
 
-        

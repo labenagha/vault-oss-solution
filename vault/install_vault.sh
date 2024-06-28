@@ -2,6 +2,7 @@
 # This script is used to configure and run Vault on an AWS server.
 
 set -e
+set -x
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"

@@ -220,14 +220,6 @@ variable "protect_from_scale_in" {
   default     = false
 }
 
-variable "user_data" {
-  description = "User data template and variables"
-  type = object({
-    template = string
-    vars     = map(string)
-  })
-}
-
 variable "target_group_arns" {
   description = "A set of `aws_alb_target_group` ARNs, for use with Application or Network Load Balancing"
   type        = list(string)

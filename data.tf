@@ -41,8 +41,9 @@ data "template_file" "gh_runner_install" {
 # }
 
 data "template_file" "user_data" {
-  template = file("${path.module}/actions-runner/_work/hcp-vault-oss/hcp-vault-oss/scripts/nginx_install.sh")
+  template = file("${path.module}/scripts/nginx_install.sh")
     vars = {
     greeting = "Welcome To Nginx UI"
   }
 }
+

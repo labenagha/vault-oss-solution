@@ -41,7 +41,7 @@ data "template_file" "gh_runner_install" {
 # }
 
 data "template_file" "user_data" {
-  template = file("${path.module}/scripts/nginx_vault.sh")
+  template = "scripts/nginx_vault.sh"
   vars = {
     greeting = "Welcome To Nginx UI"
   }

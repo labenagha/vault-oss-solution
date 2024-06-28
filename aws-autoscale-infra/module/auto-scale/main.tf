@@ -12,7 +12,7 @@ resource "aws_launch_template" "this" {
   ebs_optimized = var.ebs_optimized
   image_id      = var.image_id
   key_name      = var.key_name
-  # user_data     = base64encode(data.template_file.user_data[each.key].rendered)
+  user_data     = base64encode(data.template_file.user_data[0].rendered)
 
   vpc_security_group_ids               = length(var.network_interfaces) > 0 ? [] : var.security_groups
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
@@ -95,260 +95,88 @@ resource "aws_launch_template" "this" {
   tags = var.tags
 }
 
+resource "aws_autoscaling_group" "this" {
+  count = local.create && !var.ignore_desired_capacity_changes ? 1 : 0
 
-# resource "aws_autoscaling_group" "this" {
-#   count = local.create && !var.ignore_desired_capacity_changes ? 1 : 0
+  name        = var.use_name_prefix ? null : var.name
+  name_prefix = var.use_name_prefix ? "${var.name}-" : null
 
-#   name        = var.use_name_prefix ? null : var.name
-#   name_prefix = var.use_name_prefix ? "${var.name}-" : null
+  dynamic "launch_template" {
+    for_each = var.use_mixed_instances_policy ? [] : [1]
 
-#   dynamic "launch_template" {
-#     for_each = var.use_mixed_instances_policy ? [] : [1]
+    content {
+      id      = local.launch_template_id
+      version = local.launch_template_version
+    }
+  }
 
-#     content {
-#       id      = local.launch_template_id
-#       version = local.launch_template_version
-#     }
-#   }
+  # availability_zones  = var.availability_zones
+  vpc_zone_identifier = var.vpc_zone_identifier
 
-#   availability_zones  = var.availability_zones
-#   vpc_zone_identifier = var.vpc_zone_identifier
+  min_size                  = var.min_size
+  max_size                  = var.max_size
+  desired_capacity          = var.desired_capacity
+  desired_capacity_type     = var.desired_capacity_type
+  min_elb_capacity          = var.min_elb_capacity
+  wait_for_elb_capacity     = var.wait_for_elb_capacity
+  wait_for_capacity_timeout = var.wait_for_capacity_timeout
+  default_cooldown          = var.default_cooldown
+  protect_from_scale_in     = var.protect_from_scale_in
+  target_group_arns         = var.target_group_arns
+  placement_group           = var.placement_group
+  health_check_type         = var.health_check_type
+  health_check_grace_period = var.health_check_grace_period
+  force_delete              = var.force_delete
+  termination_policies      = var.termination_policies
 
-#   min_size                  = var.min_size
-#   max_size                  = var.max_size
-#   desired_capacity          = var.desired_capacity
-#   desired_capacity_type     = var.desired_capacity_type
-#   capacity_rebalance        = var.capacity_rebalance
-#   min_elb_capacity          = var.min_elb_capacity
-#   wait_for_elb_capacity     = var.wait_for_elb_capacity
-#   wait_for_capacity_timeout = var.wait_for_capacity_timeout
-#   default_cooldown          = var.default_cooldown
-#   default_instance_warmup   = var.default_instance_warmup
-#   protect_from_scale_in     = var.protect_from_scale_in
+  dynamic "instance_maintenance_policy" {
+    for_each = length(var.instance_maintenance_policy) > 0 ? [var.instance_maintenance_policy] : []
+    content {
+      min_healthy_percentage = instance_maintenance_policy.value.min_healthy_percentage
+      max_healthy_percentage = instance_maintenance_policy.value.max_healthy_percentage
+    }
+  }
 
-#   # TODO - remove at next breaking change. Use `traffic_source_identifier`/`traffic_source_type` instead
-#   load_balancers = var.load_balancers
-#   # TODO - remove at next breaking change. Use `traffic_source_identifier`/`traffic_source_type` instead
-#   target_group_arns         = var.target_group_arns
-#   placement_group           = var.placement_group
-#   health_check_type         = var.health_check_type
-#   health_check_grace_period = var.health_check_grace_period
+  timeouts {
+    delete = var.delete_timeout
+  }
 
-#   force_delete          = var.force_delete
-#   termination_policies  = var.termination_policies
-#   suspended_processes   = var.suspended_processes
-#   max_instance_lifetime = var.max_instance_lifetime
-
-#   enabled_metrics                  = var.enabled_metrics
-#   metrics_granularity              = var.metrics_granularity
-#   service_linked_role_arn          = var.service_linked_role_arn
-#   ignore_failed_scaling_activities = var.ignore_failed_scaling_activities
-
-#   dynamic "initial_lifecycle_hook" {
-#     for_each = var.initial_lifecycle_hooks
-#     content {
-#       name                    = initial_lifecycle_hook.value.name
-#       default_result          = try(initial_lifecycle_hook.value.default_result, null)
-#       heartbeat_timeout       = try(initial_lifecycle_hook.value.heartbeat_timeout, null)
-#       lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
-#       notification_metadata   = try(initial_lifecycle_hook.value.notification_metadata, null)
-#       notification_target_arn = try(initial_lifecycle_hook.value.notification_target_arn, null)
-#       role_arn                = try(initial_lifecycle_hook.value.role_arn, null)
-#     }
-#   }
-
-#   dynamic "instance_maintenance_policy" {
-#     for_each = length(var.instance_maintenance_policy) > 0 ? [var.instance_maintenance_policy] : []
-#     content {
-#       min_healthy_percentage = instance_maintenance_policy.value.min_healthy_percentage
-#       max_healthy_percentage = instance_maintenance_policy.value.max_healthy_percentage
-#     }
-#   }
-
-#   dynamic "instance_refresh" {
-#     for_each = length(var.instance_refresh) > 0 ? [var.instance_refresh] : []
-#     content {
-#       strategy = instance_refresh.value.strategy
-#       triggers = try(instance_refresh.value.triggers, null)
-
-#       dynamic "preferences" {
-#         for_each = try([instance_refresh.value.preferences], [])
-#         content {
-
-#           dynamic "alarm_specification" {
-#             for_each = try([preferences.value.alarm_specification], [])
-#             content {
-#               alarms = alarm_specification.value.alarms
-#             }
-#           }
-
-#           checkpoint_delay             = try(preferences.value.checkpoint_delay, null)
-#           checkpoint_percentages       = try(preferences.value.checkpoint_percentages, null)
-#           instance_warmup              = try(preferences.value.instance_warmup, null)
-#           min_healthy_percentage       = try(preferences.value.min_healthy_percentage, null)
-#           max_healthy_percentage       = try(preferences.value.max_healthy_percentage, null)
-#           auto_rollback                = try(preferences.value.auto_rollback, null)
-#           scale_in_protected_instances = try(preferences.value.scale_in_protected_instances, null)
-#           skip_matching                = try(preferences.value.skip_matching, null)
-#           standby_instances            = try(preferences.value.standby_instances, null)
-#         }
-#       }
-#     }
-#   }
-
-#   timeouts {
-#     delete = var.delete_timeout
-#   }
-
-#   dynamic "tag" {
-#     for_each = local.asg_tags
-#     content {
-#       key                 = tag.key
-#       value               = tag.value
-#       propagate_at_launch = true
-#     }
-#   }
-
-#   lifecycle {
-#     create_before_destroy = true
-#     ignore_changes = [
-#       load_balancers,
-#       target_group_arns,
-#     ]
-#   }
-# }
-
-# resource "aws_autoscaling_group" "idc" {
-#   count = local.create && var.ignore_desired_capacity_changes ? 1 : 0
-
-#   name        = var.use_name_prefix ? null : var.name
-#   name_prefix = var.use_name_prefix ? "${var.name}-" : null
-
-#   dynamic "launch_template" {
-#     for_each = var.use_mixed_instances_policy ? [] : [1]
-
-#     content {
-#       id      = local.launch_template_id
-#       version = local.launch_template_version
-#     }
-#   }
-
-#   availability_zones  = var.availability_zones
-#   vpc_zone_identifier = var.vpc_zone_identifier
-
-#   min_size                  = var.min_size
-#   max_size                  = var.max_size
-#   desired_capacity          = var.desired_capacity
-#   desired_capacity_type     = var.desired_capacity_type
-#   capacity_rebalance        = var.capacity_rebalance
-#   min_elb_capacity          = var.min_elb_capacity
-#   wait_for_elb_capacity     = var.wait_for_elb_capacity
-#   wait_for_capacity_timeout = var.wait_for_capacity_timeout
-#   default_cooldown          = var.default_cooldown
-#   default_instance_warmup   = var.default_instance_warmup
-#   protect_from_scale_in     = var.protect_from_scale_in
-
-#   load_balancers            = var.load_balancers
-#   target_group_arns         = var.target_group_arns
-#   placement_group           = var.placement_group
-#   health_check_type         = var.health_check_type
-#   health_check_grace_period = var.health_check_grace_period
-
-#   force_delete          = var.force_delete
-#   termination_policies  = var.termination_policies
-#   suspended_processes   = var.suspended_processes
-#   max_instance_lifetime = var.max_instance_lifetime
-
-#   enabled_metrics                  = var.enabled_metrics
-#   metrics_granularity              = var.metrics_granularity
-#   service_linked_role_arn          = var.service_linked_role_arn
-#   ignore_failed_scaling_activities = var.ignore_failed_scaling_activities
-
-#   dynamic "initial_lifecycle_hook" {
-#     for_each = var.initial_lifecycle_hooks
-#     content {
-#       name                    = initial_lifecycle_hook.value.name
-#       default_result          = try(initial_lifecycle_hook.value.default_result, null)
-#       heartbeat_timeout       = try(initial_lifecycle_hook.value.heartbeat_timeout, null)
-#       lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
-#       notification_metadata   = try(initial_lifecycle_hook.value.notification_metadata, null)
-#       notification_target_arn = try(initial_lifecycle_hook.value.notification_target_arn, null)
-#       role_arn                = try(initial_lifecycle_hook.value.role_arn, null)
-#     }
-#   }
-
-#   timeouts {
-#     delete = var.delete_timeout
-#   }
-
-#   dynamic "tag" {
-#     for_each = local.asg_tags
-#     content {
-#       key                 = tag.key
-#       value               = tag.value
-#       propagate_at_launch = true
-#     }
-#   }
-
-#   lifecycle {
-#     create_before_destroy = true
-#     ignore_changes = [
-#       desired_capacity,
-#       load_balancers,
-#       target_group_arns,
-#     ]
-#   }
-# }
-
-# ################################################################################
-# # Autoscaling group schedule
-# ################################################################################
-
-# resource "aws_autoscaling_schedule" "this" {
-#   for_each = local.create && var.create_schedule ? var.schedules : {}
-
-#   scheduled_action_name  = each.key
-#   autoscaling_group_name = try(aws_autoscaling_group.this[0].name, aws_autoscaling_group.idc[0].name)
-
-#   min_size         = try(each.value.min_size, null)
-#   max_size         = try(each.value.max_size, null)
-#   desired_capacity = try(each.value.desired_capacity, null)
-#   start_time       = try(each.value.start_time, null)
-#   end_time         = try(each.value.end_time, null)
-#   time_zone        = try(each.value.time_zone, null)
-
-#   # [Minute] [Hour] [Day_of_Month] [Month_of_Year] [Day_of_Week]
-#   # Cron examples: https://crontab.guru/examples.html
-#   recurrence = try(each.value.recurrence, null)
-# }
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      load_balancers,
+      target_group_arns,
+    ]
+  }
+}
 
 # ################################################################################
 # # Autoscaling Policy
 # ################################################################################
 
-# resource "aws_autoscaling_policy" "this" {
-#   for_each = { for k, v in var.scaling_policies : k => v if local.create && var.create_scaling_policy }
+resource "aws_autoscaling_policy" "this" {
+  for_each = { for k, v in var.scaling_policies : k => v if local.create && var.create_scaling_policy }
 
-#   name                   = try(each.value.name, each.key)
-#   autoscaling_group_name = var.ignore_desired_capacity_changes ? aws_autoscaling_group.idc[0].name : aws_autoscaling_group.this[0].name
+  name                   = try(each.value.name, each.key)
+  autoscaling_group_name = aws_autoscaling_group.this[0].name
 
-#   adjustment_type           = try(each.value.adjustment_type, null)
-#   policy_type               = try(each.value.policy_type, null)
-#   estimated_instance_warmup = try(each.value.estimated_instance_warmup, null)
-#   cooldown                  = try(each.value.cooldown, null)
-#   min_adjustment_magnitude  = try(each.value.min_adjustment_magnitude, null)
-#   metric_aggregation_type   = try(each.value.metric_aggregation_type, null)
-#   scaling_adjustment        = try(each.value.scaling_adjustment, null)
+  adjustment_type           = try(each.value.adjustment_type, null)
+  policy_type               = try(each.value.policy_type, null)
+  estimated_instance_warmup = try(each.value.estimated_instance_warmup, null)
+  cooldown                  = try(each.value.cooldown, null)
+  min_adjustment_magnitude  = try(each.value.min_adjustment_magnitude, null)
+  metric_aggregation_type   = try(each.value.metric_aggregation_type, null)
+  scaling_adjustment        = try(each.value.scaling_adjustment, null)
 
-#   dynamic "step_adjustment" {
-#     for_each = try(each.value.step_adjustment, [])
-#     content {
-#       scaling_adjustment          = step_adjustment.value.scaling_adjustment
-#       metric_interval_lower_bound = try(step_adjustment.value.metric_interval_lower_bound, null)
-#       metric_interval_upper_bound = try(step_adjustment.value.metric_interval_upper_bound, null)
-#     }
-#   }
-# }
+  dynamic "step_adjustment" {
+    for_each = try(each.value.step_adjustment, [])
+    content {
+      scaling_adjustment          = step_adjustment.value.scaling_adjustment
+      metric_interval_lower_bound = try(step_adjustment.value.metric_interval_lower_bound, null)
+      metric_interval_upper_bound = try(step_adjustment.value.metric_interval_upper_bound, null)
+    }
+  }
+}
 
 # ################################################################################
 # # IAM Role / Instance Profile

@@ -32,7 +32,14 @@ module "vpc" {
       to_port     = 25
       protocol    = "tcp"
       cidr_blocks = "18.209.226.207/32"
-    }
+    },
+    {
+      description     = "HTTP Vault access from VPC"
+      from_port       = 80
+      to_port         = 80
+      protocol        = "tcp"
+      security_groups = aws_security_group.load_balancer_sg.id
+    },
   ]
 
   security_group_egress = [{

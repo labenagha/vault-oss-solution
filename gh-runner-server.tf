@@ -5,7 +5,7 @@ resource "aws_key_pair" "service_key" {
 
 resource "aws_instance" "gh_runner_install" {
   ami                         = data.aws_ami.ubuntu_ami.id
-  instance_type               = var.instance_type
+  instance_type               = "t2.micro"
   subnet_id                   = module.vpc.public_subnet_id[0]
   associate_public_ip_address = true
   security_groups             = [module.vpc.security_group_id]

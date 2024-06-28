@@ -1,0 +1,23 @@
+name: Schedule-Shutdown EC2 Runner Instance
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # Runs at 12 AM CST (6 AM UTC)
+
+jobs:
+  shutdown:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run shutdown script
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+        run: |
+          sudo chmod +x ./instance_shutdown_schedule.sh
+          sudo bash instance_shutdown_schedule.sh $INSTANCE_ID $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
+        working-directory: ./scripts

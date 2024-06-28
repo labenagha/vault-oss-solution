@@ -1,0 +1,39 @@
+name: Install Vault
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  install-vault:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+# sudo apt-get install -y curl jq awscli
+          
+      - name: Ensure Vault binary is available
+        run: |
+          curl -Lo vault.zip https://releases.hashicorp.com/vault/1.8.0/vault_1.8.0_linux_amd64.zip
+          unzip vault.zip
+          sudo mv vault /usr/local/bin/
+          vault -v
+
+      - name: Run install_vault.sh script
+        run: |
+          echo "$TLS_CERT" > tls-cert.pem
+          echo "$TLS_KEY" > tls-key.pem
+          sudo chmod +x install_vault.sh
+          bash install_vault.sh --tls-cert-file tls-cert.pem --tls-key-file tls-key.pem
+        env:
+          TLS_CERT: ${{ secrets.TLS_CERT }}
+          TLS_KEY: ${{ secrets.TLS_KEY }}
+          VAULT_ADDR: https://localhost:8200
+        working-directory: ./vault

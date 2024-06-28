@@ -101,7 +101,7 @@ scaling_policies = {
 
 
 
-user_data_template = {
+user_data = {
   template = "../scripts/install_vault.sh"
   vars = {
     port              = 8200

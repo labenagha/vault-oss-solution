@@ -16,7 +16,8 @@ module "vault" {
   ebs_optimized                        = var.ebs_optimized
   image_id                             = var.image_id
   key_name                             = var.key_name
-  user_data                            = base64encode(data.template_file.user_data.rendered)
+  user_data                            = var.user_data
+  user_data_vars                       = var.user_data_vars
   network_interfaces                   = var.network_interfaces
   security_groups                      = var.security_groups
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior

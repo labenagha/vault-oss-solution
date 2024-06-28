@@ -314,42 +314,15 @@ variable "scaling_policies" {
   default     = {}
 }
 
-variable "tls_cert" {
-  description = "Path to the TLS certificate file"
+variable "user_data" {
+  description = "The Base64-encoded user data to provide when launching the instance"
   type        = string
+  default     = null
 }
 
-variable "tls_key" {
-  description = "Path to the TLS key file"
-  type        = string
+variable "user_data_vars" {
+  description = "Variables for the user data template"
+  type        = map(string)
+  default     = {}
 }
 
-variable "port" {
-  description = "Port for Vault"
-  type        = number
-}
-
-variable "log_level" {
-  description = "Log level for Vault"
-  type        = string
-}
-
-variable "s3_bucket" {
-  description = "S3 bucket name for Vault storage"
-  type        = string
-}
-
-variable "s3_bucket_region" {
-  description = "Region for the S3 bucket"
-  type        = string
-}
-
-variable "enable_s3_backend" {
-  description = "Enable S3 backend for Vault"
-  type        = bool
-}
-
-variable "user" {
-  description = "User to run Vault"
-  type        = string
-}

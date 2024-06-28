@@ -25,17 +25,3 @@ data "template_file" "gh_runner_install" {
     GITHUB_ACCESS_TOKEN = var.ACCESS_TOKEN
   }
 }
-
-data "template_file" "user_data" {
-  template = "../scripts/install_vault.sh"
-  vars = {
-    port              = var.port
-    log_level         = var.log_level
-    tls_cert          = var.tls_cert
-    tls_key           = var.tls_key
-    s3_bucket         = var.s3_bucket
-    s3_bucket_region  = var.s3_bucket_region
-    enable_s3_backend = var.enable_s3_backend
-    user              = var.user
-  }
-}

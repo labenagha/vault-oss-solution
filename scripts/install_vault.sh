@@ -39,7 +39,7 @@ echo "$TLS_KEY" > /etc/vault/tls/vault.key
 mkdir -p /etc/vault/config
 cat > "/etc/vault/config/$VAULT_CONFIG_FILE" <<EOF
 listener "tcp" {
-  address = "0.0.0.0:${DEFAULT_PORT}"
+  address = "0.0.0.0:$DEFAULT_PORT"
   cluster_address = "0.0.0.0:$((DEFAULT_PORT + 1))"
   tls_cert_file = "/etc/vault/tls/vault.crt"
   tls_key_file = "/etc/vault/tls/vault.key"
@@ -63,7 +63,7 @@ fi
 
 cat >> "/etc/vault/config/$VAULT_CONFIG_FILE" <<EOF
 ui = true
-api_addr = "https://$INSTANCE_IP_ADDRESS:${DEFAULT_PORT}"
+api_addr = "https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
 EOF
 
 # Generate systemd config
@@ -103,5 +103,5 @@ systemctl daemon-reload
 systemctl enable vault.service
 systemctl restart vault.service
 
-export VAULT_ADDR="http://127.0.0.1:${DEFAULT_PORT}"
+export VAULT_ADDR="http://127.0.0.1:$DEFAULT_PORT"
 vault status -tls-skip-verify

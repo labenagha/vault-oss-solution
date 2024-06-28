@@ -16,10 +16,10 @@ if [[ $1 == "--help" ]]; then
   echo "  --tls-cert-file <file>    Path to the TLS certificate file. Required."
   echo "  --tls-key-file <file>     Path to the TLS key file. Required."
   echo "  --port <port>             Port for Vault to listen on. Default: $DEFAULT_PORT"
-  echo "  --config-dir <dir>        Path to the Vault config directory. Default: ../config"
-  echo "  --bin-dir <dir>           Path to the Vault binary directory. Default: ../bin"
+  echo "  --config-dir <dir>        Path to the Vault config directory. Default: ./config"
+  echo "  --bin-dir <dir>           Path to the Vault binary directory. Default: ./bin"
   echo "  --log-level <level>       Log level for Vault. Default: $DEFAULT_LOG_LEVEL"
-  echo "  --user <user>             User to run Vault as. Default: owner of config dir"
+  echo "  --user <user>             User to run Vault as. Default: current user"
   echo "  --enable-s3-backend       Enable S3 backend. Requires --s3-bucket and --s3-bucket-region"
   echo "  --s3-bucket <bucket>      S3 bucket for storing Vault data"
   echo "  --s3-bucket-region <region> Region of the S3 bucket"
@@ -29,9 +29,9 @@ fi
 # Default values
 port=$DEFAULT_PORT
 log_level=$DEFAULT_LOG_LEVEL
-config_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../config" && pwd)"
-bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../bin" && pwd)"
-user=$(ls -ld "$config_dir" | awk '{print $3}')
+config_dir="./config"
+bin_dir="./bin"
+user=$(whoami)
 enable_s3_backend=false
 s3_bucket=""
 s3_bucket_region=""
@@ -66,6 +66,10 @@ for cmd in systemctl aws curl jq; do
     exit 1
   fi
 done
+
+# Ensure directories exist
+mkdir -p "$config_dir"
+mkdir -p "$bin_dir"
 
 # Generate Vault config
 instance_ip_address=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4")

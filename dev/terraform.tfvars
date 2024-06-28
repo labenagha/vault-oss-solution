@@ -11,7 +11,7 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "vault-cluster-dev"
+name                        = "vault-cluster-dev-01"
 launch_template_name        = "launch-template-vault-cluster"
 launch_template_id          = null
 create_iam_instance_profile = false

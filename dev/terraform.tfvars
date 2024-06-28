@@ -80,23 +80,23 @@ instance_maintenance_policy = {
 delete_timeout        = "15m"
 create_scaling_policy = true
 
-scaling_policies = {
-  policy1 = {
-    name                      = "scale-up-policy"
-    adjustment_type           = "ChangeInCapacity"
-    policy_type               = "StepScaling"
-    min_adjustment_magnitude  = 1
-    metric_aggregation_type   = "Average"
+# scaling_policies = {
+#   policy1 = {
+#     name                      = "scale-up-policy"
+#     adjustment_type           = "ChangeInCapacity"
+#     policy_type               = "StepScaling"
+#     min_adjustment_magnitude  = 1
+#     metric_aggregation_type   = "Average"
 
-    step_adjustment = [
-      {
-        scaling_adjustment          = 1
-        metric_interval_lower_bound = 1.0
-        metric_interval_upper_bound = 2.0
-      }
-    ]
-  }
-}
+#     step_adjustment = [
+#       {
+#         scaling_adjustment          = 1
+#         metric_interval_lower_bound = 1.0
+#         metric_interval_upper_bound = 2.0
+#       }
+#     ]
+#   }
+# }
 
 
 # port              = 8200

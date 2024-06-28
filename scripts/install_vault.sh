@@ -127,11 +127,8 @@ ProtectHome=read-only
 PrivateTmp=yes
 PrivateDevices=yes
 SecureBits=keep-caps
-AmbientCapabilities=CAP_IPC_LOCK
-Capabilities=CAP_IPC_LOCK+ep
-CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=$bin_dir/vault server -config $config_dir/$VAULT_CONFIG_FILE -log-level=$log_level
+ExecStart=$(realpath $bin_dir/vault) server -config $(realpath $config_dir/$VAULT_CONFIG_FILE) -log-level=$log_level
 ExecReload=/bin/kill --signal HUP \$MAINPID
 KillMode=process
 KillSignal=SIGINT

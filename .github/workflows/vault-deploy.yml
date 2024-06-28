@@ -39,4 +39,5 @@ jobs:
           TLS_KEY: ${{ secrets.TLS_KEY }}
           VAULT_ADDR: https://localhost:8200
         working-directory: ./scripts
+
         

@@ -314,42 +314,42 @@ variable "scaling_policies" {
   default     = {}
 }
 
-# variable "port" {
-#   description = "Port for Vault"
-#   type        = number
-# }
+variable "port" {
+  description = "Port for Vault"
+  type        = number
+}
 
-# variable "log_level" {
-#   description = "Log level for Vault"
-#   type        = string
-# }
+variable "log_level" {
+  description = "Log level for Vault"
+  type        = string
+}
 
-# variable "tls_cert" {
-#   description = "Path to the TLS certificate file"
-#   type        = string
-# }
+variable "tls_cert" {
+  description = "Path to the TLS certificate file"
+  type        = string
+}
 
-# variable "tls_key" {
-#   description = "Path to the TLS key file"
-#   type        = string
-# }
+variable "tls_key" {
+  description = "Path to the TLS key file"
+  type        = string
+}
 
-# variable "s3_bucket" {
-#   description = "S3 bucket name for Vault storage"
-#   type        = string
-# }
+variable "s3_bucket" {
+  description = "S3 bucket name for Vault storage"
+  type        = string
+}
 
-# variable "s3_bucket_region" {
-#   description = "Region for the S3 bucket"
-#   type        = string
-# }
+variable "s3_bucket_region" {
+  description = "Region for the S3 bucket"
+  type        = string
+}
 
-# variable "enable_s3_backend" {
-#   description = "Enable S3 backend for Vault"
-#   type        = bool
-# }
+variable "enable_s3_backend" {
+  description = "Enable S3 backend for Vault"
+  type        = bool
+}
 
-# variable "user" {
-#   description = "User to run Vault"
-#   type        = string
-# }
+variable "user" {
+  description = "User to run Vault"
+  type        = string
+}

@@ -11,8 +11,8 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "vault-dev-cluster-01"
-launch_template_name        = "launch-template-vault-cluster-01"
+name                        = "vault-dev-cluster-main"
+launch_template_name        = "launch-template-vault-cluster-main"
 launch_template_id          = null
 create_iam_instance_profile = false
 
@@ -99,11 +99,11 @@ create_scaling_policy = true
 # }
 
 
-# port              = 8200
-# log_level         = "info"
-# tls_cert          = "../certs/tls-cert.pem"
-# tls_key           = "../certs/tls-key.pem"
-# s3_bucket         = "consul-vault-cluster-dev"
-# s3_bucket_region  = "us-east-1"
-# enable_s3_backend = "true"
-# user              = "vault"
+port              = 8200
+log_level         = "info"
+tls_cert          = "../certs/tls-cert.pem"
+tls_key           = "../certs/tls-key.pem"
+s3_bucket         = "consul-vault-cluster-dev"
+s3_bucket_region  = "us-east-1"
+enable_s3_backend = "true"
+user              = "vault"

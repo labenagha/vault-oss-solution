@@ -22,10 +22,11 @@ jobs:
       - name: Ensure Vault binary is available
         run: |
           curl -Lo vault.zip https://releases.hashicorp.com/vault/1.8.0/vault_1.8.0_linux_amd64.zip
-          unzip -o vault.zip
+          sudo rm -rf vault  # Remove any existing directory named vault
+          unzip vault.zip
           sudo mv vault /usr/local/bin/
           vault -v
-          
+
       - name: Run install_vault.sh script
         run: |
           echo "$TLS_CERT" > tls-cert.pem

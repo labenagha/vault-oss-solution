@@ -11,7 +11,7 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "vault-dev-cluster-01"
+name                        = "vault-dev-cluster-001"
 launch_template_name        = "launch-template-vault-cluster-01"
 launch_template_id          = null
 create_iam_instance_profile = false
@@ -99,10 +99,8 @@ scaling_policies = {
   }
 }
 
-
-
 user_data = {
-  template = "../scripts/install_vault.sh"
+  template = "${path.module}/../scripts/install_vault.sh"
   vars = {
     port              = 8200
     log_level         = "info"

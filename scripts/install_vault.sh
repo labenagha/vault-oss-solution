@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script is used to configure and run Vault on an AWS server.
+# This script is used to configure and run Vault on an AWS server or in a CI environment.
 
 set -e
 set -x
@@ -8,7 +8,14 @@ VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 DEFAULT_PORT=8200
 DEFAULT_LOG_LEVEL="info"
-EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
+
+# Check if running in GitHub Actions
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  INSTANCE_IP_ADDRESS="127.0.0.1"
+else
+  EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
+  INSTANCE_IP_ADDRESS=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4" || echo "127.0.0.1")
+fi
 
 if [[ $1 == "--help" ]]; then
   echo "Usage: $0 [OPTIONS]"
@@ -72,9 +79,8 @@ mkdir -p "$config_dir"
 mkdir -p "$bin_dir"
 
 # Generate Vault config
-instance_ip_address=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4")
 cluster_port=$((port + 1))
-api_addr="https://$instance_ip_address:$port"
+api_addr="https://$INSTANCE_IP_ADDRESS:$port"
 
 cat > "$config_dir/$VAULT_CONFIG_FILE" <<EOF
 listener "tcp" {
@@ -106,7 +112,7 @@ api_addr = "$api_addr"
 EOF
 
 # Generate systemd config
-cat > "$SYSTEMD_CONFIG_PATH" <<EOF
+sudo bash -c "cat > $SYSTEMD_CONFIG_PATH" <<EOF
 [Unit]
 Description="HashiCorp Vault - A tool for managing secrets"
 Documentation=https://www.vaultproject.io/docs/

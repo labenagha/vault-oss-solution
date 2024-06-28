@@ -5,6 +5,10 @@ exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -e
 set -x
 
+sudo apt-get update
+sudo apt-get install -y curl jq unzip
+
+
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 DEFAULT_PORT=${port}

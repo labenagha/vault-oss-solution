@@ -20,17 +20,22 @@ S3_BUCKET_REGION="${s3_bucket_region}"
 ENABLE_S3_BACKEND="${enable_s3_backend}"
 USER="${user}"
 
-# Ensure required commands are installed
-apt-get update
-apt-get install -y curl jq awscli unzip
+install_awscli() {
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  sudo unzip awscliv2.zip
+  sudo ./aws/install
+}
+install_awscli
 
-# Download and install Vault
-curl -Lo vault.zip https://releases.hashicorp.com/vault/1.8.0/vault_1.8.0_linux_amd64.zip
-unzip vault.zip
-mv vault /usr/local/bin/
-vault -v
+install_vault() {
+  curl -Lo vault.zip https://releases.hashicorp.com/vault/1.8.0/vault_1.8.0_linux_amd64.zip
+  unzip vault.zip
+  mv vault /usr/local/bin/
+  vault -v
+}
+install_vault
 
-# Generate self-signed certificate (if not provided)
+
 mkdir -p /etc/vault/tls
 echo "$TLS_CERT" > /etc/vault/tls/vault.crt
 echo "$TLS_KEY" > /etc/vault/tls/vault.key

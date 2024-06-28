@@ -26,6 +26,8 @@ jobs:
           unzip vault.zip
           sudo mv vault /usr/local/bin/
           vault -v
+      - name: list
+        run: ls -l & pwd
 
       - name: Run install_vault.sh script
         run: |
@@ -37,4 +39,4 @@ jobs:
           TLS_CERT: ${{ secrets.TLS_CERT }}
           TLS_KEY: ${{ secrets.TLS_KEY }}
           VAULT_ADDR: https://localhost:8200
-        working-directory: ./vault
+        working-directory: vault/

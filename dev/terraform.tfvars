@@ -82,16 +82,16 @@ create_scaling_policy = true
 
 scaling_policies = {
   policy1 = {
-    name                     = "scale-up-policy"
-    adjustment_type          = "ChangeInCapacity"
-    policy_type              = "SimpleScaling"
-    cooldown                 = 300
-    min_adjustment_magnitude = 1
-    scaling_adjustment       = 1
-    metric_aggregation_type  = "Average"
+    name                      = "scale-up-policy"
+    adjustment_type           = "ChangeInCapacity"
+    policy_type               = "StepScaling"
+    cooldown                  = 300
+    min_adjustment_magnitude  = 1
+    metric_aggregation_type   = "Average"
+    
     step_adjustment = [
       {
-        scaling_adjustment          = -1
+        scaling_adjustment          = 1
         metric_interval_lower_bound = 1.0
         metric_interval_upper_bound = 2.0
       }

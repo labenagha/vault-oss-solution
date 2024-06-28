@@ -17,7 +17,6 @@ module "vault" {
   image_id                             = var.image_id
   key_name                             = var.key_name
   user_data                            = var.user_data
-  user_data_vars                       = var.user_data_vars
   network_interfaces                   = var.network_interfaces
   security_groups                      = var.security_groups
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior

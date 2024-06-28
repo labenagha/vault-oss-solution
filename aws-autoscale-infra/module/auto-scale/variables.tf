@@ -68,15 +68,17 @@ variable "key_name" {
 
 variable "user_data" {
   description = "The Base64-encoded user data to provide when launching the instance"
-  type        = string
-  default     = null
+  type = object({
+    template = string
+    vars = map(string)
+  })
 }
 
-variable "user_data_vars" {
-  description = "Variables for the user data template"
-  type        = map(string)
-  default     = {}
-}
+# variable "user_data_vars" {
+#   description = "Variables for the user data template"
+#   type        = map(string)
+#   default     = {}
+# }
 
 variable "network_interfaces" {
   description = "Customize network interfaces to be attached at instance boot time"

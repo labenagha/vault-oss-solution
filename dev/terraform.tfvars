@@ -17,7 +17,7 @@ launch_template_id          = null
 create_iam_instance_profile = false
 
 # You can set this to a specific version, `$Latest`, or `$Default`
-launch_template_version              = "$Latest"
+launch_template_version = "$Latest"
 # iam_instance_profile_name            = "ha-dev-iam-instance-asg"
 # iam_role_name                        = "ha-dev-iam-role"
 create_launch_template               = true
@@ -99,15 +99,18 @@ scaling_policies = {
   }
 }
 
-user_data =" ../scripts/install_vault.sh"
 
-user_data_vars = {
-   port             = 8200
-    log_level        = "info"
-    tls_cert         = var.tls_cert
-    tls_key          = var.tls_key
-    s3_bucket        = "consul-vault-cluster-dev"
-    s3_bucket_region = "us-east-1"
+
+user_data_template = {
+  template = "../scripts/install_vault.sh"
+  vars = {
+    port              = 8200
+    log_level         = "info"
+    tls_cert          = "../certs/tls-cert.pem"
+    tls_key           = "../certs/tls-key.pem"
+    s3_bucket         = "consul-vault-cluster-dev"
+    s3_bucket_region  = "us-east-1"
     enable_s3_backend = "true"
-    user             = "vault"
+    user              = "vault"
+  }
 }

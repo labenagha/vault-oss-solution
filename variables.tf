@@ -221,15 +221,11 @@ variable "protect_from_scale_in" {
 }
 
 variable "user_data" {
-  description = "The Base64-encoded user data to provide when launching the instance"
-  type        = string
-  default     = null
-}
-
-variable "user_data_vars" {
-  description = "Variables for the user data template"
-  type        = map(string)
-  default     = {}
+  description = "User data template and variables"
+  type = object({
+    template = string
+    vars     = map(string)
+  })
 }
 
 variable "target_group_arns" {

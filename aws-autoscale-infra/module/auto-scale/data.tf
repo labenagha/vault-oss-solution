@@ -16,6 +16,6 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
 data "template_file" "user_data" {
   count    = var.create_launch_template ? 1 : 0
-  template = var.user_data
-  vars     = var.user_data_vars
+  template = var.user_data.template
+  vars     = var.user_data_vars.vars
 }

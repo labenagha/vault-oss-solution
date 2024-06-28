@@ -111,7 +111,7 @@ ui = true
 api_addr = "$api_addr"
 EOF
 
-# Generate systemd config
+# Generate systemd config and log it
 sudo bash -c "cat > $SYSTEMD_CONFIG_PATH" <<EOF
 [Unit]
 Description="HashiCorp Vault - A tool for managing secrets"
@@ -146,7 +146,11 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
+# Log the systemd unit file
+echo "Generated systemd unit file:"
+sudo cat $SYSTEMD_CONFIG_PATH
+
 # Reload systemd and start Vault
 sudo systemctl daemon-reload
 sudo systemctl enable vault.service
-sudo systemctl restart vault.service
+sudo systemctl restart vault.service || { sudo systemctl status vault.service; exit 1; }

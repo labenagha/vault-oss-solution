@@ -5,6 +5,7 @@ instance_id=1$
 aws_access_key_id=$2
 aws_secret_access_key=$3
 region="us-east-1"
+instance_name="gh-runner-01"
 
 echo ***************************************************"Configuring AWS CLI"
 aws configure set aws_access_key_id "$aws_access_key_id"
@@ -28,7 +29,14 @@ function install_instance() {
 }
 install_instance
 
-if [ -z $instances ];then
+echo "Fetching latest instance ID for instance named $instance_name"
+instance_id=$(aws ec2 describe-instances \
+    --region "$region" \
+    --filters "Name=tag:Name,Values=$instance_name" "Name=instance-state-name,Values=running" \
+    --query "Reservations[*].Instances[*].InstanceId" \
+    --output text)
+    
+if [ -z $instance_id ];then
     echo "Aborting no instance ID found"
     exit 1
 fi

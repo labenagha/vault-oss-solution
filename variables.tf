@@ -322,7 +322,6 @@ variable "scaling_policies" {
   default     = {}
 }
 
-
 variable "tls_cert" {
   description = "Path to the TLS certificate file"
   type        = string

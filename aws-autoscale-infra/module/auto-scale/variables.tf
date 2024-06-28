@@ -68,10 +68,7 @@ variable "key_name" {
 
 variable "user_data" {
   description = "The Base64-encoded user data to provide when launching the instance"
-  type = object({
-    template = string
-    vars = map(string)
-  })
+  type        = string
 }
 
 # variable "user_data_vars" {

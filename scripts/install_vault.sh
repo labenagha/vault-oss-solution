@@ -164,7 +164,7 @@
 # vault status -tls-skip-verify
 
 
-
+exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -e
 set -x
 

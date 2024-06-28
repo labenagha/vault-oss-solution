@@ -1,13 +1,8 @@
 name: Schedule-Shutdown EC2 Runner Instance
 
-
 on:
-  # schedule:
-  #   - cron: "0 6 * * *"  # Runs at 12 AM CST (6 AM UTC)
-  push:
-    branches:
-      - main
-      - dev
+  schedule:
+    - cron: "0 6 * * *"  # Runs at 12 AM CST (6 AM UTC)
 
 jobs:
   shutdown:

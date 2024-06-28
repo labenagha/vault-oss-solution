@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "vault_alb_tg" {
 
   health_check {
     interval            = 30
-    path                = "/healh"
+    path                = "/"
     protocol            = "HTTP"
     timeout             = 5
     healthy_threshold   = 2
@@ -52,7 +52,7 @@ resource "aws_security_group" "load_balancer_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["143.55.59.117/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {

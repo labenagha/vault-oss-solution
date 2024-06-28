@@ -91,9 +91,9 @@ scaling_policies = {
     metric_aggregation_type   = "Average"
     step_adjustment = [
       {
-        scaling_adjustment          = 2
-        metric_interval_lower_bound = 0
-        metric_interval_upper_bound = null
+        scaling_adjustment          = -1
+        metric_interval_lower_bound = 1.0
+        metric_interval_upper_bound = 2.0
       }
     ]
   }

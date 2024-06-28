@@ -85,7 +85,6 @@ scaling_policies = {
     name                      = "scale-up-policy"
     adjustment_type           = "ChangeInCapacity"
     policy_type               = "SimpleScaling"
-    estimated_instance_warmup = 300
     cooldown                  = 300
     min_adjustment_magnitude  = 1
     metric_aggregation_type   = "Average"
@@ -98,6 +97,7 @@ scaling_policies = {
     ]
   }
 }
+
 
 # port              = 8200
 # log_level         = "info"

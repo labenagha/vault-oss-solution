@@ -183,6 +183,4 @@ s3_bucket             = "consul-vault-cluster-dev"
 s3_bucket_region      = "us-east-1"
 enable_s3_backend     = true
 user                  = "vault"
-aws_access_key_id     = null  # Set to null since it will be passed via GitHub Secrets
-aws_secret_access_key = null  # Set to null since it will be passed via GitHub Secrets
 

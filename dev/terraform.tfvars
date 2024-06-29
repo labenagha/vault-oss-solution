@@ -61,7 +61,7 @@ desired_capacity                = 2
 desired_capacity_type           = "units"
 min_elb_capacity                = 1
 wait_for_elb_capacity           = 2
-wait_for_capacity_timeout       = "2m"
+wait_for_capacity_timeout       = "10m"
 default_cooldown                = 300
 protect_from_scale_in           = false
 target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/236ad62260434695"]
@@ -101,8 +101,6 @@ create_scaling_policy = true
 
 port              = 8200
 log_level         = "info"
-tls_cert          = "../certs/tls-cert.pem"
-tls_key           = "../certs/tls-key.pem"
 s3_bucket         = "consul-vault-cluster-dev"
 s3_bucket_region  = "us-east-1"
 enable_s3_backend = "true"

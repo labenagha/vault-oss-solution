@@ -6,6 +6,7 @@ set -e
 set -x
 
 sudo apt-get update
+sudo apt-get install -y curl jq unzip openssl
 
 install_awscli() {
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"

@@ -2,7 +2,9 @@
 # This script creates an IAM role, assumes the role to get temporary credentials,
 # and configures and runs Vault with Consul for HA and AWS KMS for auto unseal.
 
+exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -e
+set -x
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"

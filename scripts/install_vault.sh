@@ -178,6 +178,11 @@ start_vault() {
 }
 
 main() {
+  if [[ $# -ne 16 ]]; then
+    log "ERROR" "Expected 16 arguments, got $#"
+    exit 1
+  fi
+
   local tls_cert_file="$1"
   local tls_key_file="$2"
   local enable_auto_unseal="$3"

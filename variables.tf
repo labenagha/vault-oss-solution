@@ -314,17 +314,6 @@ variable "scaling_policies" {
   default     = {}
 }
 
-variable "port" {
-  description = "Port for Vault to listen on"
-  type        = number
-  default     = 8200
-}
-
-variable "log_level" {
-  description = "Log level for Vault"
-  type        = string
-  default     = "info"
-}
 variable "tls_cert_file" {
   description = "Path to the TLS certificate file"
 }
@@ -336,31 +325,15 @@ variable "tls_key_file" {
 variable "enable_auto_unseal" {
   description = "Enable AWS KMS auto unseal"
   type        = bool
-  default     = true
 }
 
 variable "auto_unseal_kms_key_id" {
   description = "AWS KMS Key ID for auto unseal"
-  default     = "7c0818ce-a3a0-43b9-9008-5b5e48c216e2"
 }
 
 variable "auto_unseal_kms_key_region" {
   description = "AWS region for the KMS key"
-  default     = "us-east-1"
 }
-
-variable "aws_access_key" {
-  description = "AWS Access Key"
-  default     = "AKIAS5NG5ALSSPZOE4X5"
-}
-
-# variable "aws_secret_key" {
-#   description = "AWS Secret Key"
-# }
-
-# variable "aws_session_token" {
-#   description = "AWS Session Token"
-# }
 
 variable "config_dir" {
   description = "Directory for Vault configuration"
@@ -400,7 +373,6 @@ variable "s3_bucket_region" {
 
 variable "account_id" {
   description = "AWS Account ID"
-  default     = "200602878693"
 }
 
 variable "role_name" {

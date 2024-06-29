@@ -18,7 +18,7 @@ SESSION_NAME="VaultSession"
 log() {
   local level="$1"
   local message="$2"
-  echo "$(date +"%Y-%m-%d %H:%M:%S") [$level] ${BASH_SOURCE[0]} $message"
+  echo "$(date +"%Y-%m-%d %H:%M:%S") [$level] $message"
 }
 
 create_iam_role() {
@@ -45,7 +45,7 @@ EOL
 
 assume_role() {
   log "INFO" "Assuming IAM role ${ROLE_NAME}"
-  aws sts assume-role --role-arn "arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME}" --role-session-name "${SESSION_NAME}" > assume-role-output.json
+  aws sts assume-role --role-arn "arn:aws:iam::$ACCOUNT_ID:role/${ROLE_NAME}" --role-session-name "${SESSION_NAME}" > assume-role-output.json
 
   export AWS_ACCESS_KEY_ID=$(cat assume-role-output.json | jq -r '.Credentials.AccessKeyId')
   export AWS_SECRET_ACCESS_KEY=$(cat assume-role-output.json | jq -r '.Credentials.SecretAccessKey')

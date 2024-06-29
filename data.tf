@@ -30,7 +30,6 @@ data "template_file" "vault_install" {
   template = file("${path.module}/scripts/install_vault.sh")
   vars = {
     tls_cert_file              = var.tls_cert_file
-    tls_cert_file              = var.tls_cert_file
     tls_key_file               = var.tls_key_file
     enable_auto_unseal         = var.enable_auto_unseal
     auto_unseal_kms_key_id     = var.auto_unseal_kms_key_id

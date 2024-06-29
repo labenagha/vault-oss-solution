@@ -5,6 +5,7 @@ exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -e
 set -x
 
+# Install dependencies
 sudo apt-get update
 sudo apt-get install -y curl jq unzip openssl
 
@@ -32,6 +33,8 @@ VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 DEFAULT_PORT=${port}
 DEFAULT_LOG_LEVEL=${log_level}
+CERT_DIR="/etc/vault/tls"
+USER="${user}"
 
 INSTANCE_IP_ADDRESS=$(curl --silent --location "http://169.254.169.254/latest/meta-data/local-ipv4")
 
@@ -41,21 +44,59 @@ TLS_KEY="${tls_key}"
 S3_BUCKET="${s3_bucket}"
 S3_BUCKET_REGION="${s3_bucket_region}"
 ENABLE_S3_BACKEND="${enable_s3_backend}"
-USER="${user}"
 AWS_ACCESS_KEY_ID="${aws_access_key_id}"
 AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 
 # Create TLS directory and generate self-signed certificate if not provided
-sudo mkdir -p /etc/vault/tls
-if [ ! -f "/etc/vault/tls/vault.crt" ] || [ ! -f "/etc/vault/tls/vault.key" ]; then
-    echo "$TLS_CERT" > /etc/vault/tls/vault.crt
-    echo "$TLS_KEY" > /etc/vault/tls/vault.key
+sudo mkdir -p $CERT_DIR
+
+if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
+  cat <<EOF | sudo tee $CERT_DIR/vault.cnf
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+x509_extensions    = v3_req
+prompt             = no
+
+[ req_distinguished_name ]
+C  = US
+ST = State
+L  = City
+O  = Organization
+CN = tsrlearning.link
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ v3_req ]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = tsrlearning.link
+DNS.2 = www.tsrlearning.link
+IP.1  = 127.0.0.1
+IP.2  = $INSTANCE_IP_ADDRESS
+EOF
+
+  sudo openssl genpkey -algorithm RSA -out $CERT_DIR/vault.key -pkeyopt rsa_keygen_bits:2048
+  sudo openssl req -new -x509 -key $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -days 365 -config $CERT_DIR/vault.cnf
+else
+  echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
+  echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
+fi
+
+# Convert the key to PEM format non-interactively if needed
+if grep -q "BEGIN OPENSSH PRIVATE KEY" $CERT_DIR/vault.key; then
+  sudo ssh-keygen -p -m PEM -N "" -f $CERT_DIR/vault.key
 fi
 
 # Set permissions for TLS files
-sudo chown -R vault:vault /etc/vault/tls
-sudo chmod 600 /etc/vault/tls/vault.crt
-sudo chmod 600 /etc/vault/tls/vault.key
+sudo chown -R vault:vault $CERT_DIR
+sudo chmod 600 $CERT_DIR/vault.crt
+sudo chmod 600 $CERT_DIR/vault.key
 
 # Generate Vault config
 sudo mkdir -p /etc/vault/config
@@ -63,8 +104,8 @@ sudo cat > "/etc/vault/config/$VAULT_CONFIG_FILE" <<EOF
 listener "tcp" {
   address = "0.0.0.0:$DEFAULT_PORT"
   cluster_address = "0.0.0.0:$((DEFAULT_PORT + 1))"
-  tls_cert_file = "/etc/vault/tls/vault.crt"
-  tls_key_file = "/etc/vault/tls/vault.key"
+  tls_cert_file = "$CERT_DIR/vault.crt"
+  tls_key_file = "$CERT_DIR/vault.key"
 }
 
 storage "s3" {
@@ -138,3 +179,4 @@ ROOT_TOKEN=$(grep 'Initial Root Token:' /etc/vault/init_output.txt | awk '{print
 
 vault operator unseal "$UNSEAL_KEY"
 vault login "$ROOT_TOKEN"
+

@@ -17,7 +17,7 @@ resource "aws_instance" "gh_runner_install" {
   }
 
   lifecycle {
-    ignore_changes = [security_groups]
+    ignore_changes = [ security_groups, ami ]
   }
 
   tags = {

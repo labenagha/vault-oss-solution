@@ -42,35 +42,14 @@ S3_BUCKET="${s3_bucket}"
 S3_BUCKET_REGION="${s3_bucket_region}"
 ENABLE_S3_BACKEND="${enable_s3_backend}"
 USER="${user}"
+AWS_ACCESS_KEY_ID="${aws_access_key_id}"
+AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 
 # Create TLS directory and generate self-signed certificate if not provided
 sudo mkdir -p /etc/vault/tls
-if [ ! -f "$TLS_CERT" ] || [ ! -f "$TLS_KEY" ]; then
-    openssl genpkey -algorithm RSA -out /etc/vault/tls/vault.key -pkeyopt rsa_keygen_bits:2048
-    cat > san.cnf <<EOF
-[ req ]
-default_bits       = 2048
-prompt             = no
-default_md         = sha256
-distinguished_name = dn
-req_extensions     = req_ext
-x509_extensions    = v3_req
-
-[ dn ]
-CN = vault
-
-[ req_ext ]
-subjectAltName = @alt_names
-
-[ v3_req ]
-subjectAltName = @alt_names
-
-[ alt_names ]
-IP.1 = 127.0.0.1
-EOF
-    openssl req -new -key /etc/vault/tls/vault.key -out /etc/vault/tls/vault.csr -subj "/CN=vault"
-    openssl x509 -req -in /etc/vault/tls/vault.csr -signkey /etc/vault/tls/vault.key -out /etc/vault/tls/vault.crt -days 365 -extfile san.cnf -extensions v3_req
-    rm san.cnf
+if [ ! -f "/etc/vault/tls/vault.crt" ] || [ ! -f "/etc/vault/tls/vault.key" ]; then
+    echo "$TLS_CERT" > /etc/vault/tls/vault.crt
+    echo "$TLS_KEY" > /etc/vault/tls/vault.key
 fi
 
 # Set permissions for TLS files
@@ -126,7 +105,8 @@ Restart=on-failure
 RestartSec=5
 TimeoutStopSec=30
 LimitNOFILE=65536
-Environment="AWS_SHARED_CREDENTIALS_FILE=/etc/vault/.aws/credentials"
+Environment="AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+Environment="AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
 Environment="AWS_REGION=$S3_BUCKET_REGION"
 
 [Install]

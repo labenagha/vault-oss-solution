@@ -29,19 +29,22 @@ data "template_file" "gh_runner_install" {
 data "template_file" "vault_install" {
   template = file("${path.module}/scripts/install_vault.sh")
   vars = {
-    port                  = var.port
-    log_level             = var.log_level
-    tls_cert              = var.tls_cert
-    tls_key               = var.tls_key
-    s3_bucket             = var.s3_bucket
-    s3_bucket_region      = var.s3_bucket_region
-    enable_s3_backend     = var.enable_s3_backend
-    user                  = var.user
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
+    tls_cert_file              = var.tls_cert_file
+    tls_cert_file              = var.tls_cert_file
+    tls_key_file               = var.tls_key_file
+    enable_auto_unseal         = var.enable_auto_unseal
+    auto_unseal_kms_key_id     = var.auto_unseal_kms_key_id
+    auto_unseal_kms_key_region = var.auto_unseal_kms_key_region
+    config_dir                 = var.config_dir
+    bin_dir                    = var.bin_dir
+    user                       = var.user
+    enable_s3_backend          = var.enable_s3_backend
+    s3_bucket                  = var.s3_bucket
+    s3_bucket_path             = var.s3_bucket_path
+    s3_bucket_region           = var.s3_bucket_region
+    account_id                 = var.account_id
   }
 }
-
 
 data "template_file" "user_data" {
   template = file("${path.module}/scripts/nginx_install.sh")

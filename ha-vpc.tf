@@ -40,6 +40,13 @@ module "vpc" {
       protocol        = "tcp"
       security_groups = aws_security_group.load_balancer_sg.id
     },
+    {
+      description     = "HTTP Vault access from VPC"
+      from_port       = 8500
+      to_port         = 8500
+      protocol        = "tcp"
+      security_groups = "0.0.0.0/0"
+    },
   ]
 
   security_group_egress = [{

@@ -325,51 +325,80 @@ variable "log_level" {
   type        = string
   default     = "info"
 }
-
-variable "tls_cert" {
-  description = "TLS certificate for Vault"
-  type        = string
+variable "tls_cert_file" {
+  description = "Path to the TLS certificate file"
 }
 
-variable "tls_key" {
-  description = "TLS key for Vault"
-  type        = string
+variable "tls_key_file" {
+  description = "Path to the TLS key file"
 }
 
-variable "s3_bucket" {
-  description = "S3 bucket for Vault storage"
-  type        = string
-  default     = "consul-vault-cluster-dev"
-}
-
-variable "s3_bucket_region" {
-  description = "AWS region for the S3 bucket"
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "enable_s3_backend" {
-  description = "Enable S3 backend for Vault"
+variable "enable_auto_unseal" {
+  description = "Enable AWS KMS auto unseal"
   type        = bool
   default     = true
 }
 
+variable "auto_unseal_kms_key_id" {
+  description = "AWS KMS Key ID for auto unseal"
+  default     = "7c0818ce-a3a0-43b9-9008-5b5e48c216e2"
+}
+
+variable "auto_unseal_kms_key_region" {
+  description = "AWS region for the KMS key"
+  default     = "us-east-1"
+}
+
+variable "aws_access_key" {
+  description = "AWS Access Key"
+  default     = "AKIAS5NG5ALSSPZOE4X5"
+}
+
+# variable "aws_secret_key" {
+#   description = "AWS Secret Key"
+# }
+
+# variable "aws_session_token" {
+#   description = "AWS Session Token"
+# }
+
+variable "config_dir" {
+  description = "Directory for Vault configuration"
+  default     = "/etc/vault"
+}
+
+variable "bin_dir" {
+  description = "Directory for Vault binary"
+  default     = "/usr/local/bin"
+}
+
 variable "user" {
   description = "User to run Vault"
-  type        = string
   default     = "vault"
 }
 
-variable "aws_access_key_id" {
-  description = "AWS Access Key ID"
-  type        = string
-  sensitive   = true
+variable "enable_s3_backend" {
+  description = "Enable S3 backend for Vault storage"
+  type        = bool
+  default     = false
+}
+
+variable "s3_bucket" {
+  description = "S3 bucket for Vault storage"
   default     = ""
 }
 
-variable "aws_secret_access_key" {
-  description = "AWS Secret Access Key"
-  type        = string
-  sensitive   = true
+variable "s3_bucket_path" {
+  description = "S3 bucket path for Vault storage"
   default     = ""
+}
+
+variable "s3_bucket_region" {
+  description = "AWS region for the S3 bucket"
+  default     = ""
+}
+
+variable "account_id" {
+  description = "AWS Account ID"
+  default     = "200602878693"
 }

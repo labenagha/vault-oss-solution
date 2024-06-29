@@ -1,193 +1,209 @@
 #!/bin/bash
-# This script is used to configure and run Vault on an AWS server or in a CI environment.
+# This script creates an IAM role, assumes the role to get temporary credentials,
+# and configures and runs Vault with Consul for HA and AWS KMS for auto unseal.
 
-exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -e
-set -x
-
-sudo apt-get update
-sudo apt-get install -y curl jq unzip openssl
-
-install_awscli() {
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  sudo unzip awscliv2.zip
-  sudo ./aws/install
-}
-install_awscli
-
-install_vault() {
-  curl -Lo vault.zip https://releases.hashicorp.com/vault/1.17.0/vault_1.17.0_linux_amd64.zip
-  sudo unzip vault.zip
-  sudo mv vault /usr/local/bin/
-  vault -v
-}
-install_vault
-
-# Create vault user if it does not exist
-if ! id "vault" &>/dev/null; then
-    sudo useradd --system --home /etc/vault --shell /bin/false vault
-fi
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
+
 DEFAULT_PORT=8200
-DEFAULT_LOG_LEVEL=info
-VAULT_DIR=/opt/vault/data
-CERT_DIR="/etc/vault/tls"
-USER="vault"
-INSTANCE_IP_ADDRESS=$(curl --silent --location "http://169.254.169.254/latest/meta-data/local-ipv4")
+DEFAULT_LOG_LEVEL="info"
 
-# Environment variables passed from Terraform
-TLS_CERT="${tls_cert}"
-TLS_KEY="${tls_key}"
-S3_BUCKET="${s3_bucket}"
-S3_BUCKET_REGION="${s3_bucket_region}"
-ENABLE_S3_BACKEND="${enable_s3_backend}"
-AWS_ACCESS_KEY_ID="${aws_access_key_id}"
-AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
+EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
+ROLE_NAME="VaultAdminRole"
+POLICY_ARN="arn:aws:iam::aws:policy/AdministratorAccess"
+SESSION_NAME="VaultSession"
 
-# Ensure the Vault data directory exists
-sudo mkdir -p $VAULT_DIR
-
-# Create TLS directory and generate self-signed certificate if not provided
-sudo mkdir -p $CERT_DIR
-if [ ! -f "$CERT_DIR/vault.crt" ] || [ ! -f "$CERT_DIR/vault.key" ]; then
-    echo "$TLS_CERT" > $CERT_DIR/vault.crt
-    echo "$TLS_KEY" > $CERT_DIR/vault.key
-fi
-
-if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
-  cat <<EOF | sudo tee $CERT_DIR/vault.cnf
-[ req ]
-default_bits       = 2048
-distinguished_name = req_distinguished_name
-req_extensions     = req_ext
-x509_extensions    = v3_req
-prompt             = no
-
-[ req_distinguished_name ]
-C  = US
-ST = State
-L  = City
-O  = Organization
-CN = tsrlearning.link
-
-[ req_ext ]
-subjectAltName = @alt_names
-
-[ v3_req ]
-keyUsage = keyEncipherment, dataEncipherment
-extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
-
-[ alt_names ]
-DNS.1 = tsrlearning.link
-DNS.2 = www.tsrlearning.link
-IP.1  = 127.0.0.1
-IP.2  = $INSTANCE_IP_ADDRESS
-EOF
-
-  sudo openssl genpkey -algorithm RSA -out $CERT_DIR/vault.key -pkeyopt rsa_keygen_bits:2048
-  sudo openssl req -new -x509 -key $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -days 365 -config $CERT_DIR/vault.cnf
-else
-  echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
-  echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
-fi
-
-# Set permissions for TLS files
-sudo chown -R vault:vault $CERT_DIR
-sudo chmod 600 $CERT_DIR/vault.crt
-sudo chmod 600 $CERT_DIR/vault.key
-
-# Generate Vault config
-sudo mkdir -p /etc/vault/config
-sudo cat > "/etc/vault/config/$VAULT_CONFIG_FILE" <<EOF
-listener "tcp" {
-  address = "0.0.0.0:$DEFAULT_PORT"
-  cluster_address = "0.0.0.0:$((DEFAULT_PORT + 1))"
-  tls_cert_file = "$CERT_DIR/vault.crt"
-  tls_key_file = "$CERT_DIR/vault.key"
+log() {
+  local level="$1"
+  local message="$2"
+  echo "$(date +"%Y-%m-%d %H:%M:%S") [$level] ${BASH_SOURCE[0]} $message"
 }
 
-storage "s3" {
-  bucket = "$S3_BUCKET"
-  region = "$S3_BUCKET_REGION"
+create_iam_role() {
+  log "INFO" "Creating IAM role ${ROLE_NAME}"
+  cat > trust-policy.json << EOL
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOL
+
+  aws iam create-role --role-name "${ROLE_NAME}" --assume-role-policy-document file://trust-policy.json
+  aws iam attach-role-policy --role-name "${ROLE_NAME}" --policy-arn "${POLICY_ARN}"
+  rm trust-policy.json
 }
 
-ui = true
-api_addr = "https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
-disable_mlock = true
-EOF
+assume_role() {
+  log "INFO" "Assuming IAM role ${ROLE_NAME}"
+  aws sts assume-role --role-arn "arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME}" --role-session-name "${SESSION_NAME}" > assume-role-output.json
 
-# Set permissions for vault config
-sudo chown -R vault:vault /etc/vault/config
+  export AWS_ACCESS_KEY_ID=$(cat assume-role-output.json | jq -r '.Credentials.AccessKeyId')
+  export AWS_SECRET_ACCESS_KEY=$(cat assume-role-output.json | jq -r '.Credentials.SecretAccessKey')
+  export AWS_SESSION_TOKEN=$(cat assume-role-output.json | jq -r '.Credentials.SessionToken')
+  
+  rm assume-role-output.json
+}
 
-# Generate systemd config
-sudo cat > "$SYSTEMD_CONFIG_PATH" <<EOF
-[Unit]
-Description=HashiCorp Vault - A tool for managing secrets
-Documentation=https://www.vaultproject.io/docs/
-Requires=network-online.target
-After=network-online.target
+get_instance_ip_address() {
+  curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4"
+}
 
-[Service]
-User=$USER
-Group=$USER
-ProtectSystem=full
-ProtectHome=read-only
-PrivateTmp=yes
-PrivateDevices=yes
-SecureBits=keep-caps
-NoNewPrivileges=yes
-ExecStart=/usr/local/bin/vault server -config /etc/vault/config/$VAULT_CONFIG_FILE -log-level=$DEFAULT_LOG_LEVEL
-ExecReload=/bin/kill --signal HUP \$MAINPID
-KillMode=process
-KillSignal=SIGINT
-Restart=on-failure
-RestartSec=5
-TimeoutStopSec=30
-LimitNOFILE=65536
-Environment="AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
-Environment="AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
-Environment="AWS_REGION=$S3_BUCKET_REGION"
+check_installed() {
+  local name="$1"
+  if ! command -v "$name" &> /dev/null; then
+    log "ERROR" "The binary '$name' is required but not installed."
+    exit 1
+  fi
+}
 
-[Install]
-WantedBy=multi-user.target
-EOF
+create_vault_config() {
+  local tls_cert_file="$1"
+  local tls_key_file="$2"
+  local enable_auto_unseal="$3"
+  local auto_unseal_kms_key_id="$4"
+  local auto_unseal_kms_key_region="$5"
+  local config_dir="$6"
+  local user="$7"
+  local enable_s3_backend="$8"
+  local s3_bucket="$9"
+  local s3_bucket_path="${10}"
+  local s3_bucket_region="${11}"
 
-# Set AWS credentials
-sudo mkdir -p /etc/vault/.aws
-sudo cat > /etc/vault/.aws/credentials <<EOF
-[default]
-aws_access_key_id=$AWS_ACCESS_KEY_ID
-aws_secret_access_key=$AWS_SECRET_ACCESS_KEY
-EOF
-sudo chown -R vault:vault /etc/vault/.aws
-sudo chmod 600 /etc/vault/.aws/credentials
+  local instance_ip_address
+  instance_ip_address=$(get_instance_ip_address)
 
-# Reload systemd and start Vault
-sudo systemctl daemon-reload
-sudo systemctl enable vault.service
-sudo systemctl restart vault.service
-sudo systemctl status vault.service
+  local config_path="$config_dir/$VAULT_CONFIG_FILE"
+  log "INFO" "Creating Vault config file at $config_path"
 
-# export VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
-# export VAULT_SKIP_VERIFY=true
+  {
+    echo "listener \"tcp\" {"
+    echo "  address = \"0.0.0.0:$DEFAULT_PORT\""
+    echo "  tls_cert_file = \"$tls_cert_file\""
+    echo "  tls_key_file = \"$tls_key_file\""
+    echo "}"
 
-# export VAULT_ADDR="https://10.0.21.203:8200"
-# export VAULT_SKIP_VERIFY=true
+    if [[ "$enable_auto_unseal" == "true" ]]; then
+      echo "seal \"awskms\" {"
+      echo "  kms_key_id = \"$auto_unseal_kms_key_id\""
+      echo "  region = \"$auto_unseal_kms_key_region\""
+      echo "}"
+    fi
 
-# sudo VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT" VAULT_SKIP_VERIFY=true vault operator init -key-shares=1 -key-threshold=1 | sudo tee /etc/vault/init_output.txt
+    if [[ "$enable_s3_backend" == "true" ]]; then
+      echo "storage \"s3\" {"
+      echo "  bucket = \"$s3_bucket\""
+      echo "  path   = \"$s3_bucket_path\""
+      echo "  region = \"$s3_bucket_region\""
+      echo "}"
+    else
+      echo "storage \"consul\" {"
+      echo "  address = \"127.0.0.1:8500\""
+      echo "  path = \"vault/\""
+      echo "}"
+    fi
 
-# # Extract Unseal Key and Root Token
-# UNSEAL_KEY=$(grep 'Unseal Key 1:' /etc/vault/init_output.txt | awk '{print $NF}')
-# ROOT_TOKEN=$(grep 'Initial Root Token:' /etc/vault/init_output.txt | awk '{print $NF}')
+    echo "cluster_addr = \"https://$instance_ip_address:$((DEFAULT_PORT + 1))\""
+    echo "api_addr = \"https://$instance_ip_address:$DEFAULT_PORT\""
+    echo "ui = true"
+  } > "$config_path"
 
-# # Create JSON file for unseal
-# echo "{\"key\": \"$UNSEAL_KEY\"}" | sudo tee /tmp/unseal_key.json
+  chown "$user:$user" "$config_path"
+}
 
-# # Unseal Vault using the JSON file
-# curl --header "X-Vault-Token: $ROOT_TOKEN" --request PUT --data @/tmp/unseal_key.json https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT/v1/sys/unseal -k
+create_systemd_config() {
+  local systemd_config_path="$1"
+  local vault_config_dir="$2"
+  local vault_bin_dir="$3"
+  local log_level="$4"
+  local user="$5"
 
-# # Login to Vault using the Root Token
-# VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT" VAULT_SKIP_VERIFY=true vault login "$ROOT_TOKEN"
+  log "INFO" "Creating systemd config file at $systemd_config_path"
+
+  {
+    echo "[Unit]"
+    echo "Description=HashiCorp Vault - A tool for managing secrets"
+    echo "Documentation=https://www.vaultproject.io/docs/"
+    echo "Requires=network-online.target"
+    echo "After=network-online.target"
+
+    echo "[Service]"
+    echo "User=$user"
+    echo "Group=$user"
+    echo "ProtectSystem=full"
+    echo "ProtectHome=read-only"
+    echo "PrivateTmp=yes"
+    echo "PrivateDevices=yes"
+    echo "SecureBits=keep-caps"
+    echo "AmbientCapabilities=CAP_IPC_LOCK"
+    echo "Capabilities=CAP_IPC_LOCK+ep"
+    echo "CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK"
+    echo "NoNewPrivileges=yes"
+    echo "ExecStart=$vault_bin_dir/vault server -config=$vault_config_dir -log-level=$log_level"
+    echo "ExecReload=/bin/kill --signal HUP \$MAINPID"
+    echo "KillMode=process"
+    echo "KillSignal=SIGINT"
+    echo "Restart=on-failure"
+    echo "RestartSec=5"
+    echo "TimeoutStopSec=30"
+    echo "StartLimitIntervalSec=60"
+    echo "StartLimitBurst=3"
+    echo "LimitNOFILE=65536"
+
+    echo "[Install]"
+    echo "WantedBy=multi-user.target"
+  } > "$systemd_config_path"
+}
+
+start_vault() {
+  log "INFO" "Reloading systemd config and starting Vault"
+  systemctl daemon-reload
+  systemctl enable vault.service
+  systemctl restart vault.service
+}
+
+main() {
+  local tls_cert_file="$1"
+  local tls_key_file="$2"
+  local enable_auto_unseal="$3"
+  local auto_unseal_kms_key_id="$4"
+  local auto_unseal_kms_key_region="$5"
+  local config_dir="$6"
+  local bin_dir="$7"
+  local user="$8"
+  local enable_s3_backend="$9"
+  local s3_bucket="${10}"
+  local s3_bucket_path="${11}"
+  local s3_bucket_region="${12}"
+  local account_id="${13}"
+
+  if [[ -z "$tls_cert_file" || -z "$tls_key_file" ]]; then
+    log "ERROR" "TLS cert and key files are required."
+    exit 1
+  fi
+
+  check_installed "systemctl"
+  check_installed "aws"
+  check_installed "curl"
+  check_installed "jq"
+
+  ACCOUNT_ID="$account_id"
+  create_iam_role
+  assume_role
+
+  mkdir -p "$config_dir"
+  create_vault_config "$tls_cert_file" "$tls_key_file" "$enable_auto_unseal" "$auto_unseal_kms_key_id" "$auto_unseal_kms_key_region" "$config_dir" "$user" "$enable_s3_backend" "$s3_bucket" "$s3_bucket_path" "$s3_bucket_region"
+  create_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$bin_dir" "$DEFAULT_LOG_LEVEL" "$user"
+  start_vault
+}
+
+main "$@"

@@ -98,10 +98,12 @@ create_scaling_policy = true
 #   }
 # }
 
+enable_s3_backend = true
+s3_bucket         = "consul-vault-cluster-dev"
+s3_bucket_path    = ""
+s3_bucket_region  = "us-east-1"
 
-port                  = 8200
-log_level             = "info"
-tls_cert              = <<EOF
+tls_cert_file = <<EOF
 -----BEGIN CERTIFICATE-----
 MIIGQDCCBSigAwIBAgIRAKEtRTiQCRcNftHqS7m6w+YwDQYJKoZIhvcNAQELBQAw
 gY8xCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAO
@@ -140,7 +142,7 @@ w4jdfsYicJqaEOFATlqzJhvob9I=
 -----END CERTIFICATE-----
 EOF
 
-tls_key               = <<EOF
+tls_key_file = <<EOF
 -----BEGIN PRIVATE KEY-----
 MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCujEOatkrgPPpG
 QWzJKO3QWcqjnvIvFrGgf24U6hCoMbsWP2f/fzZXWKT8r3P8NqHNYE9GDdzn0P6L
@@ -170,9 +172,4 @@ RMgbcns1JsvI+IB4JTWnMmjSlUlzBmf8GciULcVhqdLySlcvDBla0URLqx9A5i1f
 vp5I+W5Wu1805PCZ4Sl7
 -----END PRIVATE KEY-----
 EOF
-
-s3_bucket             = "consul-vault-cluster-dev"
-s3_bucket_region      = "us-east-1"
-enable_s3_backend     = true
-user                  = "vault"
 

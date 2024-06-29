@@ -315,51 +315,59 @@ variable "scaling_policies" {
 }
 
 variable "port" {
-  description = "Port for Vault"
+  description = "Port for Vault to listen on"
   type        = number
+  default     = 8200
 }
 
 variable "log_level" {
   description = "Log level for Vault"
   type        = string
+  default     = "info"
 }
 
 variable "tls_cert" {
-  description = "Path to the TLS certificate file"
+  description = "TLS certificate for Vault"
   type        = string
 }
 
 variable "tls_key" {
-  description = "Path to the TLS key file"
+  description = "TLS key for Vault"
   type        = string
 }
 
 variable "s3_bucket" {
-  description = "S3 bucket name for Vault storage"
+  description = "S3 bucket for Vault storage"
   type        = string
+  default     = "consul-vault-cluster-dev"
 }
 
 variable "s3_bucket_region" {
-  description = "Region for the S3 bucket"
+  description = "AWS region for the S3 bucket"
   type        = string
+  default     = "us-east-1"
 }
 
 variable "enable_s3_backend" {
   description = "Enable S3 backend for Vault"
   type        = bool
+  default     = true
 }
 
 variable "user" {
   description = "User to run Vault"
   type        = string
+  default     = "vault"
 }
 
 variable "aws_access_key_id" {
   description = "AWS Access Key ID"
   type        = string
+  sensitive   = true
 }
 
 variable "aws_secret_access_key" {
   description = "AWS Secret Access Key"
   type        = string
+  sensitive   = true
 }

@@ -170,12 +170,15 @@ sudo systemctl enable vault.service
 sudo systemctl restart vault.service
 
 # Initialize and unseal Vault
-export VAULT_ADDR="https://127.0.0.1:$DEFAULT_PORT"
+export VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
 export VAULT_SKIP_VERIFY=true
 
 vault operator init -key-shares=1 -key-threshold=1 > /etc/vault/init_output.txt
 UNSEAL_KEY=$(grep 'Unseal Key 1:' /etc/vault/init_output.txt | awk '{print $NF}')
 ROOT_TOKEN=$(grep 'Initial Root Token:' /etc/vault/init_output.txt | awk '{print $NF}')
+
+echo $UNSEAL_KEY
+echo $ROOT_TOKEN
 
 vault operator unseal "$UNSEAL_KEY"
 vault login "$ROOT_TOKEN"

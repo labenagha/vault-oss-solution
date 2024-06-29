@@ -32,7 +32,7 @@ VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 DEFAULT_PORT=8200
 DEFAULT_LOG_LEVEL=info
-
+VAULT_DIR=/opt/vault/data
 CERT_DIR="/etc/vault/tls"
 USER="vault"
 INSTANCE_IP_ADDRESS=$(curl --silent --location "http://169.254.169.254/latest/meta-data/local-ipv4")
@@ -47,7 +47,7 @@ AWS_ACCESS_KEY_ID="${aws_access_key_id}"
 AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 
 # Ensure the Vault data directory exists
-sudo mkdir -p /opt/vault/data
+sudo mkdir -p $VAULT_DIR
 
 # Create TLS directory and generate self-signed certificate if not provided
 sudo mkdir -p $CERT_DIR
@@ -56,10 +56,8 @@ if [ ! -f "$CERT_DIR/vault.crt" ] || [ ! -f "$CERT_DIR/vault.key" ]; then
     echo "$TLS_KEY" > $CERT_DIR/vault.key
 fi
 
-# Generate the certificate if not provided
-if [ ! -s "$CERT_DIR/vault.crt" ] || [ ! -s "$CERT_DIR/vault.key" ]; then
-  CONFIG_FILE="$CERT_DIR/vault.cnf"
-  cat <<EOF | sudo tee $CONFIG_FILE
+if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
+  cat <<EOF | sudo tee $CERT_DIR/vault.cnf
 [ req ]
 default_bits       = 2048
 distinguished_name = req_distinguished_name
@@ -72,7 +70,7 @@ C  = US
 ST = State
 L  = City
 O  = Organization
-CN = $INSTANCE_IP_ADDRESS
+CN = tsrlearning.link
 
 [ req_ext ]
 subjectAltName = @alt_names
@@ -83,13 +81,17 @@ extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = $INSTANCE_IP_ADDRESS
-IP.1  = $INSTANCE_IP_ADDRESS
+DNS.1 = tsrlearning.link
+DNS.2 = www.tsrlearning.link
+IP.1  = 127.0.0.1
+IP.2  = $INSTANCE_IP_ADDRESS
 EOF
 
-  sudo openssl req -new -nodes -x509 -days 365 -keyout $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -config $CONFIG_FILE
-  sudo chown vault:vault $CERT_DIR/vault.crt $CERT_DIR/vault.key
-  sudo chmod 600 $CERT_DIR/vault.crt $CERT_DIR/vault.key
+  sudo openssl genpkey -algorithm RSA -out $CERT_DIR/vault.key -pkeyopt rsa_keygen_bits:2048
+  sudo openssl req -new -x509 -key $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -days 365 -config $CERT_DIR/vault.cnf
+else
+  echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
+  echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
 fi
 
 # Set permissions for TLS files
@@ -171,6 +173,9 @@ sudo systemctl restart vault.service
 # Initialize and unseal Vault
 export VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
 export VAULT_SKIP_VERIFY=true
+
+# export VAULT_ADDR="https://10.0.21.203:8200"
+# export VAULT_SKIP_VERIFY=true
 
 # sudo VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT" VAULT_SKIP_VERIFY=true vault operator init -key-shares=1 -key-threshold=1 | sudo tee /etc/vault/init_output.txt
 

@@ -169,10 +169,10 @@ sudo chmod 600 /etc/vault/.aws/credentials
 sudo systemctl daemon-reload
 sudo systemctl enable vault.service
 sudo systemctl restart vault.service
+sudo systemctl status vault.service
 
-# Initialize and unseal Vault
-export VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
-export VAULT_SKIP_VERIFY=true
+# export VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
+# export VAULT_SKIP_VERIFY=true
 
 # export VAULT_ADDR="https://10.0.21.203:8200"
 # export VAULT_SKIP_VERIFY=true

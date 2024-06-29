@@ -45,6 +45,7 @@ data "template_file" "vault_install" {
     role_name                  = var.role_name
     policy_arn                 = var.policy_arn
     session_name               = var.session_name
+    default_port               = var.default_port
   }
 }
 

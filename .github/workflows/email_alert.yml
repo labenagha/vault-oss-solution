@@ -1,33 +1,32 @@
-name: Send Email via SMTP
+# name: Send Email via SMTP
+# on:
+#   push:
+#     branches:
+#       - main
+#       - dev
 
-on:
-  push:
-    branches:
-      - main
-      - dev
-
-env:
-  workdir: "${{ github.workspace }}/scripts"
-  AuthPass: "${{ secrets.AuthPass }}"
-  email_subject:  "Email Automation Log Info"
-  receipent_email:  "lbenagha@gmail.com"
-  email_body_file: "${{ github.workspace }}/emails/succesful_emailsend.txt"
-  sender_email: "${{ secrets.sender_email}}"
+# env:
+#   workdir: "${{ github.workspace }}/scripts"
+#   AuthPass: "${{ secrets.AuthPass }}"
+#   email_subject:  "Email Automation Log Info"
+#   receipent_email:  "lbenagha@gmail.com"
+#   email_body_file: "${{ github.workspace }}/emails/succesful_emailsend.txt"
+#   sender_email: "${{ secrets.sender_email}}"
   
-jobs:
-  send_email:
-    runs-on: gh-runner-dev-01
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2 
+# jobs:
+#   send_email:
+#     runs-on: gh-runner-dev-01
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2 
 
-      - name: Install and Send Email
-        run: |
-          sudo chmod +x email_alert.sh
-          sudo bash email_alert.sh \
-          "${{ env.AuthPass }}" \
-          "${{ env.receipent_email }}" \
-          "${{ env.email_subject }}" \
-          "${{ env.sender_email }}" \
-          "${{ env.email_body_file }}" 
-        working-directory: ./scripts
+#       - name: Install and Send Email
+#         run: |
+#           sudo chmod +x email_alert.sh
+#           sudo bash email_alert.sh \
+#           "${{ env.AuthPass }}" \
+#           "${{ env.receipent_email }}" \
+#           "${{ env.email_subject }}" \
+#           "${{ env.sender_email }}" \
+#           "${{ env.email_body_file }}" 
+#         working-directory: ./scripts

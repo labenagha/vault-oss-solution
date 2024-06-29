@@ -8,7 +8,7 @@ set -x
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 
-DEFAULT_PORT={$default_port}
+DEFAULT_PORT="${default_port}"
 DEFAULT_LOG_LEVEL="info"
 
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"

@@ -402,3 +402,18 @@ variable "account_id" {
   description = "AWS Account ID"
   default     = "200602878693"
 }
+
+variable "role_name" {
+  description = "IAM role name"
+  default     = "VaultAdminRole"
+}
+
+variable "policy_arn" {
+  description = "IAM policy ARN"
+  default     = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
+variable "session_name" {
+  description = "IAM session name"
+  default     = "VaultSession"
+}

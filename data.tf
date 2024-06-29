@@ -42,6 +42,9 @@ data "template_file" "vault_install" {
     s3_bucket_path             = var.s3_bucket_path
     s3_bucket_region           = var.s3_bucket_region
     account_id                 = var.account_id
+    role_name                  = var.role_name
+    policy_arn                 = var.policy_arn
+    session_name               = var.session_name
   }
 }
 

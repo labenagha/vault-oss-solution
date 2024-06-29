@@ -11,9 +11,6 @@ DEFAULT_PORT=8200
 DEFAULT_LOG_LEVEL="info"
 
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
-ROLE_NAME="VaultAdminRole"
-POLICY_ARN="arn:aws:iam::aws:policy/AdministratorAccess"
-SESSION_NAME="VaultSession"
 
 log() {
   local level="$1"
@@ -22,7 +19,10 @@ log() {
 }
 
 create_iam_role() {
-  log "INFO" "Creating IAM role ${ROLE_NAME}"
+  local role_name="$1"
+  local policy_arn="$2"
+
+  log "INFO" "Creating IAM role ${role_name}"
   cat > trust-policy.json << EOL
 {
   "Version": "2012-10-17",
@@ -38,14 +38,18 @@ create_iam_role() {
 }
 EOL
 
-  aws iam create-role --role-name "${ROLE_NAME}" --assume-role-policy-document file://trust-policy.json
-  aws iam attach-role-policy --role-name "${ROLE_NAME}" --policy-arn "${POLICY_ARN}"
+  aws iam create-role --role-name "${role_name}" --assume-role-policy-document file://trust-policy.json
+  aws iam attach-role-policy --role-name "${role_name}" --policy-arn "${policy_arn}"
   rm trust-policy.json
 }
 
 assume_role() {
-  log "INFO" "Assuming IAM role ${ROLE_NAME}"
-  aws sts assume-role --role-arn "arn:aws:iam::$ACCOUNT_ID:role/${ROLE_NAME}" --role-session-name "${SESSION_NAME}" > assume-role-output.json
+  local account_id="$1"
+  local role_name="$2"
+  local session_name="$3"
+
+  log "INFO" "Assuming IAM role ${role_name}"
+  aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
 
   export AWS_ACCESS_KEY_ID=$(cat assume-role-output.json | jq -r '.Credentials.AccessKeyId')
   export AWS_SECRET_ACCESS_KEY=$(cat assume-role-output.json | jq -r '.Credentials.SecretAccessKey')
@@ -185,6 +189,9 @@ main() {
   local s3_bucket_path="${11}"
   local s3_bucket_region="${12}"
   local account_id="${13}"
+  local role_name="${14}"
+  local policy_arn="${15}"
+  local session_name="${16}"
 
   if [[ -z "$tls_cert_file" || -z "$tls_key_file" ]]; then
     log "ERROR" "TLS cert and key files are required."
@@ -196,9 +203,8 @@ main() {
   check_installed "curl"
   check_installed "jq"
 
-  ACCOUNT_ID="$account_id"
-  create_iam_role
-  assume_role
+  create_iam_role "$role_name" "$policy_arn"
+  assume_role "$account_id" "$role_name" "$session_name"
 
   mkdir -p "$config_dir"
   create_vault_config "$tls_cert_file" "$tls_key_file" "$enable_auto_unseal" "$auto_unseal_kms_key_id" "$auto_unseal_kms_key_region" "$config_dir" "$user" "$enable_s3_backend" "$s3_bucket" "$s3_bucket_path" "$s3_bucket_region"

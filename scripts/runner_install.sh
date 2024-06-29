@@ -55,9 +55,9 @@ cd "$RUNNER_DIR"
     EOL
 EOF
 
-function execute() {
+function execute_service() {
     ./run.sh &
     sudo chown -R $USER:$USER "$RUNNER_DIR"
     ./svc.sh install && ./svc.sh start
 }
-execute
+execute_service

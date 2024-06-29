@@ -50,7 +50,7 @@ AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 # Create TLS directory and generate self-signed certificate if not provided
 sudo mkdir -p $CERT_DIR
 
-# if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
+if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
 cat <<EOF | sudo tee $CERT_DIR/vault.cnf
   [ req ]
   default_bits       = 2048
@@ -83,10 +83,10 @@ EOF
 
 sudo openssl genpkey -algorithm RSA -out $CERT_DIR/vault.key -pkeyopt rsa_keygen_bits:2048
 sudo openssl req -new -x509 -key $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -days 365 -config $CERT_DIR/vault.cnf
-# else
-#   echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
-#   echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
-# fi
+else
+  echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
+  echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
+fi
 
 # Convert the key to PEM format non-interactively if needed
 if grep -q "BEGIN OPENSSH PRIVATE KEY" $CERT_DIR/vault.key; then

@@ -99,9 +99,13 @@ create_scaling_policy = true
 # }
 
 
-port              = 8200
-log_level         = "info"
-s3_bucket         = "consul-vault-cluster-dev"
-s3_bucket_region  = "us-east-1"
-enable_s3_backend = "true"
-user              = "vault"
+port                  = 8200
+log_level             = "info"
+s3_bucket             = "consul-vault-cluster-dev"
+s3_bucket_region      = "us-east-1"
+enable_s3_backend     = "true"
+user                  = "vault"
+aws_access_key_id     = null
+aws_secret_access_key = null
+tls_cert              = null
+tls_key               = null

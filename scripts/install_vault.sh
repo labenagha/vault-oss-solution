@@ -50,43 +50,43 @@ AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 # Create TLS directory and generate self-signed certificate if not provided
 sudo mkdir -p $CERT_DIR
 
-if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
-  cat <<EOF | sudo tee $CERT_DIR/vault.cnf
-[ req ]
-default_bits       = 2048
-distinguished_name = req_distinguished_name
-req_extensions     = req_ext
-x509_extensions    = v3_req
-prompt             = no
+# if [ -z "$TLS_CERT" ] || [ -z "$TLS_KEY" ]; then
+cat <<EOF | sudo tee $CERT_DIR/vault.cnf
+  [ req ]
+  default_bits       = 2048
+  distinguished_name = req_distinguished_name
+  req_extensions     = req_ext
+  x509_extensions    = v3_req
+  prompt             = no
 
-[ req_distinguished_name ]
-C  = US
-ST = State
-L  = City
-O  = Organization
-CN = tsrlearning.link
+  [ req_distinguished_name ]
+  C  = US
+  ST = State
+  L  = City
+  O  = Organization
+  CN = tsrlearning.link
 
-[ req_ext ]
-subjectAltName = @alt_names
+  [ req_ext ]
+  subjectAltName = @alt_names
 
-[ v3_req ]
-keyUsage = keyEncipherment, dataEncipherment
-extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
+  [ v3_req ]
+  keyUsage = keyEncipherment, dataEncipherment
+  extendedKeyUsage = serverAuth
+  subjectAltName = @alt_names
 
-[ alt_names ]
-DNS.1 = tsrlearning.link
-DNS.2 = www.tsrlearning.link
-IP.1  = 127.0.0.1
-IP.2  = $INSTANCE_IP_ADDRESS
+  [ alt_names ]
+  DNS.1 = tsrlearning.link
+  DNS.2 = www.tsrlearning.link
+  IP.1  = 127.0.0.1
+  IP.2  = $INSTANCE_IP_ADDRESS
 EOF
 
-  sudo openssl genpkey -algorithm RSA -out $CERT_DIR/vault.key -pkeyopt rsa_keygen_bits:2048
-  sudo openssl req -new -x509 -key $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -days 365 -config $CERT_DIR/vault.cnf
-else
-  echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
-  echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
-fi
+sudo openssl genpkey -algorithm RSA -out $CERT_DIR/vault.key -pkeyopt rsa_keygen_bits:2048
+sudo openssl req -new -x509 -key $CERT_DIR/vault.key -out $CERT_DIR/vault.crt -days 365 -config $CERT_DIR/vault.cnf
+# else
+#   echo "$TLS_CERT" | sudo tee $CERT_DIR/vault.crt > /dev/null
+#   echo "$TLS_KEY" | sudo tee $CERT_DIR/vault.key > /dev/null
+# fi
 
 # Convert the key to PEM format non-interactively if needed
 if grep -q "BEGIN OPENSSH PRIVATE KEY" $CERT_DIR/vault.key; then
@@ -173,13 +173,4 @@ sudo systemctl restart vault.service
 export VAULT_ADDR="https://$INSTANCE_IP_ADDRESS:$DEFAULT_PORT"
 export VAULT_SKIP_VERIFY=true
 
-vault operator init -key-shares=1 -key-threshold=1 > /etc/vault/init_output.txt
-UNSEAL_KEY=$(grep 'Unseal Key 1:' /etc/vault/init_output.txt | awk '{print $NF}')
-ROOT_TOKEN=$(grep 'Initial Root Token:' /etc/vault/init_output.txt | awk '{print $NF}')
-
-echo $UNSEAL_KEY
-echo $ROOT_TOKEN
-
-vault operator unseal "$UNSEAL_KEY"
-vault login "$ROOT_TOKEN"
 

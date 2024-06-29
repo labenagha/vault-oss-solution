@@ -1,8 +1,7 @@
 #!/bin/bash
-# This script creates an IAM role, assumes the role to get temporary credentials,
-# and configures and runs Vault with Consul for HA and AWS KMS for auto unseal.
 
 exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
+
 set -e
 set -x
 
@@ -73,17 +72,17 @@ check_installed() {
 }
 
 create_vault_config() {
-  local tls_cert_file="$1"
-  local tls_key_file="$2"
-  local enable_auto_unseal="$3"
-  local auto_unseal_kms_key_id="$4"
-  local auto_unseal_kms_key_region="$5"
-  local config_dir="$6"
-  local user="$7"
-  local enable_s3_backend="$8"
-  local s3_bucket="$9"
-  local s3_bucket_path="${10}"
-  local s3_bucket_region="${11}"
+  local tls_cert_file="$TLS_CERT_FILE"
+  local tls_key_file="$TLS_KEY_FILE"
+  local enable_auto_unseal="$ENABLE_AUTO_UNSEAL"
+  local auto_unseal_kms_key_id="$AUTO_UNSEAL_KMS_KEY_ID"
+  local auto_unseal_kms_key_region="$AUTO_UNSEAL_KMS_KEY_REGION"
+  local config_dir="$CONFIG_DIR"
+  local user="$USER"
+  local enable_s3_backend="$ENABLE_S3_BACKEND"
+  local s3_bucket="$S3_BUCKET"
+  local s3_bucket_path="$S3_BUCKET_PATH"
+  local s3_bucket_region="$S3_BUCKET_REGION"
 
   local instance_ip_address
   instance_ip_address=$(get_instance_ip_address)
@@ -127,11 +126,11 @@ create_vault_config() {
 }
 
 create_systemd_config() {
-  local systemd_config_path="$1"
-  local vault_config_dir="$2"
-  local vault_bin_dir="$3"
-  local log_level="$4"
-  local user="$5"
+  local systemd_config_path="$SYSTEMD_CONFIG_PATH"
+  local vault_config_dir="$CONFIG_DIR"
+  local vault_bin_dir="$BIN_DIR"
+  local log_level="$DEFAULT_LOG_LEVEL"
+  local user="$USER"
 
   log "INFO" "Creating systemd config file at $systemd_config_path"
 
@@ -178,29 +177,7 @@ start_vault() {
 }
 
 main() {
-  if [[ $# -ne 16 ]]; then
-    log "ERROR" "Expected 16 arguments, got $#"
-    exit 1
-  fi
-
-  local tls_cert_file="$1"
-  local tls_key_file="$2"
-  local enable_auto_unseal="$3"
-  local auto_unseal_kms_key_id="$4"
-  local auto_unseal_kms_key_region="$5"
-  local config_dir="$6"
-  local bin_dir="$7"
-  local user="$8"
-  local enable_s3_backend="$9"
-  local s3_bucket="${10}"
-  local s3_bucket_path="${11}"
-  local s3_bucket_region="${12}"
-  local account_id="${13}"
-  local role_name="${14}"
-  local policy_arn="${15}"
-  local session_name="${16}"
-
-  if [[ -z "$tls_cert_file" || -z "$tls_key_file" ]]; then
+  if [[ -z "$TLS_CERT_FILE" || -z "$TLS_KEY_FILE" ]]; then
     log "ERROR" "TLS cert and key files are required."
     exit 1
   fi
@@ -210,13 +187,13 @@ main() {
   check_installed "curl"
   check_installed "jq"
 
-  create_iam_role "$role_name" "$policy_arn"
-  assume_role "$account_id" "$role_name" "$session_name"
+  create_iam_role "$ROLE_NAME" "$POLICY_ARN"
+  assume_role "$ACCOUNT_ID" "$ROLE_NAME" "$SESSION_NAME"
 
-  mkdir -p "$config_dir"
-  create_vault_config "$tls_cert_file" "$tls_key_file" "$enable_auto_unseal" "$auto_unseal_kms_key_id" "$auto_unseal_kms_key_region" "$config_dir" "$user" "$enable_s3_backend" "$s3_bucket" "$s3_bucket_path" "$s3_bucket_region"
-  create_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$bin_dir" "$DEFAULT_LOG_LEVEL" "$user"
+  mkdir -p "$CONFIG_DIR"
+  create_vault_config
+  create_systemd_config
   start_vault
 }
 
-main "$@"
+main

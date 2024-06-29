@@ -37,6 +37,8 @@ data "template_file" "vault_install" {
     s3_bucket_region  = var.s3_bucket_region
     enable_s3_backend = var.enable_s3_backend
     user              = var.user
+    aws_access_key_id = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
   }
 }
 

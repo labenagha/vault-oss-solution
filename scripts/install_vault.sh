@@ -72,17 +72,17 @@ check_installed() {
 }
 
 create_vault_config() {
-  local tls_cert_file="$TLS_CERT_FILE"
-  local tls_key_file="$TLS_KEY_FILE"
-  local enable_auto_unseal="$ENABLE_AUTO_UNSEAL"
-  local auto_unseal_kms_key_id="$AUTO_UNSEAL_KMS_KEY_ID"
-  local auto_unseal_kms_key_region="$AUTO_UNSEAL_KMS_KEY_REGION"
-  local config_dir="$CONFIG_DIR"
-  local user="$USER"
-  local enable_s3_backend="$ENABLE_S3_BACKEND"
-  local s3_bucket="$S3_BUCKET"
-  local s3_bucket_path="$S3_BUCKET_PATH"
-  local s3_bucket_region="$S3_BUCKET_REGION"
+  local tls_cert_file="${TLS_CERT_FILE}"
+  local tls_key_file="${TLS_KEY_FILE}"
+  local enable_auto_unseal="${ENABLE_AUTO_UNSEAL}"
+  local auto_unseal_kms_key_id="${AUTO_UNSEAL_KMS_KEY_ID}"
+  local auto_unseal_kms_key_region="${AUTO_UNSEAL_KMS_KEY_REGION}"
+  local config_dir="${CONFIG_DIR}"
+  local user="${USER}"
+  local enable_s3_backend="${ENABLE_S3_BACKEND}"
+  local s3_bucket="${S3_BUCKET}"
+  local s3_bucket_path="${S3_BUCKET_PATH}"
+  local s3_bucket_region="${S3_BUCKET_REGION}"
 
   local instance_ip_address
   instance_ip_address=$(get_instance_ip_address)
@@ -127,7 +127,7 @@ create_vault_config() {
 
 create_systemd_config() {
   local systemd_config_path="$SYSTEMD_CONFIG_PATH"
-  local vault_config_dir="$CONFIG_DIR"
+  local vault_config_dir="${CONFIG_DIR}"
   local vault_bin_dir="$BIN_DIR"
   local log_level="$DEFAULT_LOG_LEVEL"
   local user="$USER"
@@ -190,7 +190,7 @@ main() {
   create_iam_role "$ROLE_NAME" "$POLICY_ARN"
   assume_role "$ACCOUNT_ID" "$ROLE_NAME" "$SESSION_NAME"
 
-  mkdir -p "$CONFIG_DIR"
+  mkdir -p "${CONFIG_DIR}"
   create_vault_config
   create_systemd_config
   start_vault

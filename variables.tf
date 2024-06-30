@@ -379,7 +379,7 @@ variable "account_id" {
 
 variable "role_name" {
   description = "IAM role name"
-  default     = "VaultAdminRole"
+  default     = "HCVaultAdminRole"
 }
 
 variable "policy_arn" {

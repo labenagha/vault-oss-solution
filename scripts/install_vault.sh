@@ -5,31 +5,31 @@ set -x
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
-DEFAULT_PORT="${default_port}"
+DEFAULT_PORT="${default_port:-8200}"
 DEFAULT_LOG_LEVEL="info"
 iam_user_name="VaultAdminUser"
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
-default_port=${default_port}
+default_port=${default_port:-8200}
 TLS_CERT=${TLS_CERT}
 TLS_KEY_FILE=${TLS_KEY_FILE}
-ENABLE_AUTO_UNSEAL=${ENABLE_AUTO_UNSEAL}
+ENABLE_AUTO_UNSEAL=${ENABLE_AUTO_UNSEAL:-false}
 AUTO_UNSEAL_KMS_KEY_ID=${AUTO_UNSEAL_KMS_KEY_ID}
 AUTO_UNSEAL_KMS_KEY_REGION=${AUTO_UNSEAL_KMS_KEY_REGION}
-CONFIG_DIR=${CONFIG_DIR}
-BIN_DIR=${BIN_DIR}
-USER=${USER}
-ENABLE_S3_BACKEND=${ENABLE_S3_BACKEND}
+CONFIG_DIR=${CONFIG_DIR:-/etc/vault}
+BIN_DIR=${BIN_DIR:-/usr/local/bin}
+USER=${USER:-vault}
+ENABLE_S3_BACKEND=${ENABLE_S3_BACKEND:-false}
 S3_BUCKET=${S3_BUCKET}
 S3_BUCKET_PATH=${S3_BUCKET_PATH}
 S3_BUCKET_REGION=${S3_BUCKET_REGION}
 account_id=${account_id}
-role_name=${role_name}
-policy_arn=${policy_arn}
-session_name=${session_name}
+role_name=${role_name:-VaultAdminRole}
+policy_arn=${policy_arn:-arn:aws:iam::aws:policy/AdministratorAccess}
+session_name=${session_name:-VaultSession}
 initial_aws_access_key_id=${USER_AWS_ACCESS_KEY_ID}
 initial_aws_secret_access_key=${USER_AWS_SECRET_ACCESS_KEY}
-aws_region=${AWS_DEFAULT_REGION}
+aws_region=${AWS_DEFAULT_REGION:-us-east-1}
 
 # Install prerequisites
 sudo apt-get update
@@ -38,9 +38,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 sudo unzip awscliv2.zip
 sudo ./aws/install
 
-export AWS_ACCESS_KEY_ID=${USER_AWS_ACCESS_KEY_ID}
-export AWS_SECRET_ACCESS_KEY=${USER_AWS_SECRET_ACCESS_KEY}
-export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+export AWS_ACCESS_KEY_ID=${initial_aws_access_key_id}
+export AWS_SECRET_ACCESS_KEY=${initial_aws_secret_access_key}
+export AWS_DEFAULT_REGION=${aws_region}
 
 # Create IAM role
 sudo cat > trust-policy.json << EOL
@@ -82,6 +82,7 @@ for cmd in systemctl curl jq; do
 done
 
 if [[ -z "${TLS_CERT}" || -z "${TLS_KEY_FILE}" ]]; then
+    echo "ERROR: TLS_CERT and TLS_KEY_FILE must be set."
     exit 1
 fi
 

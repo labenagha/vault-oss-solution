@@ -98,16 +98,13 @@ create_scaling_policy = true
 #   }
 # }
 
-enable_auto_unseal         = true
-auto_unseal_kms_key_id     = "7c0818ce-a3a0-43b9-9008-5b5e48c216e2"
-auto_unseal_kms_key_region = "us-east-1"
-config_dir                 = "/etc/vault"
-bin_dir                    = "/usr/local/bin"
-user                       = "vault"
-enable_s3_backend          = true
-s3_bucket                  = "consul-vault-cluster-dev"
-s3_bucket_path             = ""
-s3_bucket_region           = "us-east-1"
+ENABLE_AUTO_UNSEAL         = true
+AUTO_UNSEAL_KMS_KEY_ID     = "7c0818ce-a3a0-43b9-9008-5b5e48c216e2"
+AUTO_UNSEAL_KMS_KEY_REGION = "us-east-1"
+ENABLE_S3_BACKEND          = true
+S3_BUCKET                  = "consul-vault-cluster-dev"
+S3_BUCKET_PATH             = ""
+S3_BUCKET_REGION           = "us-east-1"
 account_id                 = "200602878693"
 role_name                  = "VaultAdminRole"
 policy_arn                 = "arn:aws:iam::aws:policy/AdministratorAccess"

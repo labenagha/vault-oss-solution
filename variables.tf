@@ -413,7 +413,7 @@ variable "BIN_DIR" {
   default     = "/usr/local/bin"
 }
 
-variable "user" {
+variable "USER" {
   description = "User to run Vault"
   default     = "vault"
 }

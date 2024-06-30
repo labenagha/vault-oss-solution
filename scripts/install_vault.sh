@@ -183,7 +183,7 @@ start_vault() {
 }
 
 main() {
-  if [[ -z "$TLS_CERT_FILE" || -z "$TLS_KEY_FILE" ]]; then
+  if [[ -z "${TLS_CERT_FILE}" || -z "${TLS_KEY_FILE}" ]]; then
     log "ERROR" "TLS cert and key files are required."
     exit 1
   fi

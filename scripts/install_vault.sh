@@ -9,7 +9,30 @@ VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 DEFAULT_PORT="${default_port}"
 DEFAULT_LOG_LEVEL="info"
+iam_user_name="VaultAdminUser"
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
+
+echo "default_port=${default_port}"
+echo "TLS_CERT_FILE=${TLS_CERT_FILE}"
+echo "TLS_KEY_FILE=${TLS_KEY_FILE}"
+echo "ENABLE_AUTO_UNSEAL=${ENABLE_AUTO_UNSEAL}"
+echo "AUTO_UNSEAL_KMS_KEY_ID=${AUTO_UNSEAL_KMS_KEY_ID}"
+echo "AUTO_UNSEAL_KMS_KEY_REGION=${AUTO_UNSEAL_KMS_KEY_REGION}"
+echo "CONFIG_DIR=${CONFIG_DIR}"
+echo "BIN_DIR=${BIN_DIR}"
+echo "USER=${USER}"
+echo "ENABLE_S3_BACKEND=${ENABLE_S3_BACKEND}"
+echo "S3_BUCKET=${S3_BUCKET}"
+echo "S3_BUCKET_PATH=${S3_BUCKET_PATH}"
+echo "S3_BUCKET_REGION=${S3_BUCKET_REGION}"
+echo "account_id=${account_id}"
+echo "role_name=${role_name}"
+echo "policy_arn=${policy_arn}"
+echo "session_name=${session_name}"
+echo "initial_aws_access_key_id=${initial_aws_access_key_id}"
+echo "initial_aws_secret_access_key=${initial_aws_secret_access_key}"
+echo "aws_region=${aws_region}"
+echo "iam_user_name=${iam_user_name}"
 
 # Install prerequisites
 sudo apt-get update
@@ -23,6 +46,7 @@ export AWS_ACCESS_KEY_ID="${USER_AWS_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY="${USER_AWS_SECRET_ACCESS_KEY}"
 export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}"
 
+
 # Create IAM role
 cat > trust-policy.json << EOL
 {
@@ -31,7 +55,8 @@ cat > trust-policy.json << EOL
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "ec2.amazonaws.com"
+        "Service": "ec2.amazonaws.com",
+        "AWS": "arn:aws:iam::${account_id}:user/${iam_user_name}"
       },
       "Action": "sts:AssumeRole"
     }

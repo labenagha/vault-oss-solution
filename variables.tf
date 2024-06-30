@@ -398,13 +398,13 @@ variable "default_port" {
   default     = 8200
 }
 
-variable "AWS_ACCESS_KEY_ID" {
+variable "USER_AWS_ACCESS_KEY_ID" {
   description = "Initial AWS access key ID"
   type        = string
-  default     = "AKIAS5NG5ALSSPZOE4X5"
+  default     = "AKIAS5NG5ALS6Y6SB4BO"
 }
 
-variable "aws_secret_access_key" {
+variable "USER_AWS_SECRET_ACCESS_KEY" {
   description = "Initial AWS secret access key"
   type        = string
   sensitive   = true

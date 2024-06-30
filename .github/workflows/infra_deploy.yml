@@ -17,8 +17,8 @@ env:
   TF_VAR_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   TF_VAR_TLS_CERT: ${{ secrets.TLS_CERT }}
   TF_VAR_TLS_KEY_FILE: ${{ secrets.TLS_KEY }}
-  TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_VAR_USER_AWS_ACCESS_KEY_ID: ${{ secrets.USER_AWS_ACCESS_KEY_ID }}
+  TF_VAR_USER_AWS_SECRET_ACCESS_KEY: ${{ secrets.USER_AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:

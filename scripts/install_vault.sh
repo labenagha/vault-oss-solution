@@ -19,8 +19,8 @@ sudo unzip awscliv2.zip
 sudo ./aws/install
 
 
-export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-export AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
+export AWS_ACCESS_KEY_ID="${USER_AWS_ACCESS_KEY_ID}"
+export AWS_SECRET_ACCESS_KEY="${USER_AWS_SECRET_ACCESS_KEY}"
 export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}"
 
 # Create IAM role

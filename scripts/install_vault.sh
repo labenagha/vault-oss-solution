@@ -31,7 +31,7 @@ echo "policy_arn=${policy_arn}"
 echo "session_name=${session_name}"
 echo "initial_aws_access_key_id=${USER_AWS_ACCESS_KEY_ID}"
 echo "initial_aws_secret_access_key=${USER_AWS_SECRET_ACCESS_KEY}"
-echo "aws_region=${aws_region}"
+echo "aws_region=${AWS_DEFAULT_REGION}"
 echo "iam_user_name=${iam_user_name}"
 
 

@@ -100,7 +100,7 @@ create_vault_config() {
     echo "listener \"tcp\" {"
     echo "  address = \"0.0.0.0:$DEFAULT_PORT\""
     echo "  tls_cert_file = \"${TLS_CERT_FILE}\""
-    echo "  tls_key_file = \"$tls_key_file\""
+    echo "  tls_key_file = \"${TLS_KEY_FILE}\""
     echo "}"
 
     if [[ "$enable_auto_unseal" == "true" ]]; then

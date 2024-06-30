@@ -98,7 +98,6 @@ create_scaling_policy = true
 #   }
 # }
 
-
 ENABLE_AUTO_UNSEAL         = true
 AUTO_UNSEAL_KMS_KEY_ID     = "7c0818ce-a3a0-43b9-9008-5b5e48c216e2"
 AUTO_UNSEAL_KMS_KEY_REGION = "us-east-1"

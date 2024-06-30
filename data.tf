@@ -43,6 +43,8 @@ data "template_file" "vault_install" {
     USER_AWS_SECRET_ACCESS_KEY = var.USER_AWS_SECRET_ACCESS_KEY
     USER_AWS_ACCESS_KEY_ID     = var.USER_AWS_ACCESS_KEY_ID
     AWS_DEFAULT_REGION         = var.AWS_DEFAULT_REGION
+    VAULT_VERSION              = var.VAULT_VERSION
+    CONSUL_VERSION             = var.CONSUL_VERSION
   }
 }
 

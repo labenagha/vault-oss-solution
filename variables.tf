@@ -316,6 +316,7 @@ variable "scaling_policies" {
 
 variable "TLS_CERT_FILE" {
   description = "Path to the TLS certificate file"
+  type        = string
   default     = <<EOF
 -----BEGIN CERTIFICATE-----
 MIIGQDCCBSigAwIBAgIRAKEtRTiQCRcNftHqS7m6w+YwDQYJKoZIhvcNAQELBQAw
@@ -358,6 +359,7 @@ EOF
 
 variable "TLS_KEY_FILE" {
   description = "Path to the TLS key file"
+  type        = string
   default     = <<EOF
   -----BEGIN PRIVATE KEY-----
 MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCujEOatkrgPPpG

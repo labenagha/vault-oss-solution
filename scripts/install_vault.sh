@@ -1,9 +1,9 @@
 #!/bin/bash
-exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
+exec > >(sudo tee -a /var/log/consul_vault_install.log) 2>&1
 set -x
 
-VAULT_VERSION="1.17.1"
-CONSUL_VERSION="1.11.1"
+VAULT_VERSION="${VAULT_VERSION}"
+CONSUL_VERSION="${CONSUL_VERSION}"
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
@@ -26,14 +26,14 @@ sudo unzip awscliv2.zip
 sudo ./aws/install
 
 # Install Consul
-CONSUL_ZIP="consul_1.11.1_linux_amd64.zip"
+CONSUL_ZIP="consul_${CONSUL_VERSION}_linux_amd64.zip"
 curl -O https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ZIP
 sudo unzip $CONSUL_ZIP
 sudo mv consul $BIN_DIR
 rm $CONSUL_ZIP
 
 # Install Vault
-VAULT_ZIP="vault_1.17.1_linux_amd64.zip"
+VAULT_ZIP="vault_${VAULT_VERSION}_linux_amd64.zip"
 curl -O https://releases.hashicorp.com/vault/$VAULT_VERSION/$VAULT_ZIP
 sudo unzip $VAULT_ZIP
 sudo mv vault $BIN_DIR
@@ -103,7 +103,7 @@ sudo cat > trust-policy.json << EOL
 }
 EOL
 
-aws iam create-role --role-name "${role_name}" --assume-role-policy-document file://trust-policy.json
+aws iam create-role --role-name "${role_name}" --assume-role-policy-document file://trust-policy.json || true
 aws iam attach-role-policy --role-name "${role_name}" --policy-arn "${policy_arn}"
 rm trust-policy.json
 
@@ -126,6 +126,7 @@ for cmd in systemctl curl jq; do
 done
 
 # Create OpenSSL config for generating the certificate
+sudo mkdir -p /etc/vault
 sudo cat > /etc/vault/openssl.cnf << EOF
 [ req ]
 distinguished_name = req_distinguished_name
@@ -156,43 +157,20 @@ sudo chown vault:vault /etc/vault/vault.crt /etc/vault/vault.key
 sudo chmod 640 /etc/vault/vault.crt /etc/vault/vault.key
 
 # Create Vault config
-sudo mkdir -p "${CONFIG_DIR}"
-config_path="${CONFIG_DIR}/$VAULT_CONFIG_FILE"
+sudo mkdir -p "$CONFIG_DIR"
+config_path="$CONFIG_DIR/$VAULT_CONFIG_FILE"
 sudo cat > "$config_path" << EOF
 listener "tcp" {
   address = "0.0.0.0:$DEFAULT_PORT"
   tls_cert_file = "/etc/vault/vault.crt"
   tls_key_file = "/etc/vault/vault.key"
 }
-EOF
 
-if [[ "$ENABLE_AUTO_UNSEAL" == "true" ]]; then
-  cat >> "$config_path" << EOF
-seal "awskms" {
-  kms_key_id = "${AUTO_UNSEAL_KMS_KEY_ID}"
-  region = "${AUTO_UNSEAL_KMS_KEY_REGION}"
-}
-EOF
-fi
-
-if [[ "$ENABLE_S3_BACKEND" == "true" ]]; then
-  sudo cat >> "$config_path" << EOF
-storage "s3" {
-  bucket = "${S3_BUCKET}"
-  path   = "${S3_BUCKET_PATH}"
-  region = "${S3_BUCKET_REGION}"
-}
-EOF
-else
-  sudo cat >> "$config_path" << EOF
 storage "consul" {
   address = "127.0.0.1:8500"
   path = "vault/"
 }
-EOF
-fi
 
-cat >> "$config_path" << EOF
 cluster_addr = "https://$instance_ip_address:$((DEFAULT_PORT + 1))"
 api_addr = "https://$instance_ip_address:$DEFAULT_PORT"
 ui = true
@@ -236,7 +214,6 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-# Reload systemd config and start Vault
 sudo systemctl daemon-reload
 sudo systemctl enable vault.service
 sudo systemctl start vault.service
@@ -246,12 +223,4 @@ sudo systemctl status vault.service
 export VAULT_ADDR="https://127.0.0.1:$DEFAULT_PORT"
 export VAULT_CACERT="/etc/vault/vault.crt"
 
-# vault operator init -key-shares=5 -key-threshold=3 > /etc/vault/init-keys.txt
-
-# # Unseal Vault
-# for key in $(grep 'Unseal Key' /etc/vault/init-keys.txt | awk '{print $NF}'); do
-#   vault operator unseal $key
-# done
-
-# # Login with the root token
-# vault login $(grep 'Initial Root Token:' /etc/vault/init-keys.txt | awk '{print $NF}')
+vault status -skip-tls-verify

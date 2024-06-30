@@ -29,14 +29,9 @@ data "template_file" "gh_runner_install" {
 data "template_file" "vault_install" {
   template = file("${path.module}/scripts/install_vault.sh")
   vars = {
-    TLS_CERT                   = var.TLS_CERT
-    TLS_KEY_FILE               = var.TLS_KEY_FILE
     ENABLE_AUTO_UNSEAL         = var.ENABLE_AUTO_UNSEAL
     AUTO_UNSEAL_KMS_KEY_ID     = var.AUTO_UNSEAL_KMS_KEY_ID
     AUTO_UNSEAL_KMS_KEY_REGION = var.AUTO_UNSEAL_KMS_KEY_REGION
-    CONFIG_DIR                 = var.CONFIG_DIR
-    BIN_DIR                    = var.BIN_DIR
-    USER                       = var.USER
     ENABLE_S3_BACKEND          = var.ENABLE_S3_BACKEND
     S3_BUCKET                  = var.S3_BUCKET
     S3_BUCKET_PATH             = var.S3_BUCKET_PATH
@@ -45,7 +40,6 @@ data "template_file" "vault_install" {
     role_name                  = var.role_name
     policy_arn                 = var.policy_arn
     session_name               = var.session_name
-    default_port               = var.default_port
     USER_AWS_SECRET_ACCESS_KEY = var.USER_AWS_SECRET_ACCESS_KEY
     USER_AWS_ACCESS_KEY_ID     = var.USER_AWS_ACCESS_KEY_ID
     AWS_DEFAULT_REGION         = var.AWS_DEFAULT_REGION

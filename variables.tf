@@ -314,16 +314,6 @@ variable "scaling_policies" {
   default     = {}
 }
 
-variable "TLS_CERT" {
-  description = "Path to the TLS certificate file"
-  type        = string
-}
-
-variable "TLS_KEY_FILE" {
-  description = "Path to the TLS key file"
-  type        = string
-}
-
 variable "ENABLE_AUTO_UNSEAL" {
   description = "Enable AWS KMS auto unseal"
   type        = bool
@@ -335,21 +325,6 @@ variable "AUTO_UNSEAL_KMS_KEY_ID" {
 
 variable "AUTO_UNSEAL_KMS_KEY_REGION" {
   description = "AWS region for the KMS key"
-}
-
-variable "CONFIG_DIR" {
-  description = "Directory for Vault configuration"
-  default     = "/etc/vault"
-}
-
-variable "BIN_DIR" {
-  description = "Directory for Vault binary"
-  default     = "/usr/local/bin"
-}
-
-variable "USER" {
-  description = "User to run Vault"
-  default     = "vault"
 }
 
 variable "ENABLE_S3_BACKEND" {
@@ -379,7 +354,7 @@ variable "account_id" {
 
 variable "role_name" {
   description = "IAM role name"
-  default     = "HCVaultAdminRole"
+  default     = "VaultAdminRole"
 }
 
 variable "policy_arn" {
@@ -390,12 +365,6 @@ variable "policy_arn" {
 variable "session_name" {
   description = "IAM session name"
   default     = "VaultSession"
-}
-
-variable "default_port" {
-  description = "Vault Default Port"
-  type        = number
-  default     = 8200
 }
 
 variable "USER_AWS_ACCESS_KEY_ID" {
@@ -413,4 +382,14 @@ variable "AWS_DEFAULT_REGION" {
   description = "AWS region"
   type        = string
   default     = "us-east-1"
+}
+
+variable "VAULT_VERSION" {
+  type        = string
+  description = "VAULT version"
+}
+
+variable "CONSUL_VERSION" {
+  type        = string
+  description = "CONSUL version"
 }

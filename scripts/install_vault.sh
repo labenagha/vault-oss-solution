@@ -138,7 +138,7 @@ ST = Texas
 L = Dallas
 O = TSRLearning LLC
 OU = TSR
-CN = ${instance_ip_address}
+CN = $instance_ip_address
 
 [ v3_req ]
 keyUsage = keyEncipherment, dataEncipherment
@@ -146,7 +146,7 @@ extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 
 [ alt_names ]
-IP.1 = ${instance_ip_address}
+IP.1 = $instance_ip_address
 DNS.1 = www.tsrlearning.link
 EOF
 

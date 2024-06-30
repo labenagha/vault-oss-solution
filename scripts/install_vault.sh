@@ -26,18 +26,18 @@ sudo unzip awscliv2.zip
 sudo ./aws/install
 
 # Install Consul
-CONSUL_ZIP="consul_${CONSUL_VERSION}_linux_amd64.zip"
-curl -O https://releases.hashicorp.com/consul/${CONSUL_VERSION}/${CONSUL_ZIP}
-sudo unzip ${CONSUL_ZIP}
-sudo mv consul ${BIN_DIR}
-rm ${CONSUL_ZIP}
+CONSUL_ZIP="consul_$CONSUL_VERSION_linux_amd64.zip"
+curl -O https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ZIP
+sudo unzip $CONSUL_ZIP
+sudo mv consul $BIN_DIR
+rm $CONSUL_ZIP
 
 # Install Vault
-VAULT_ZIP="vault_${VAULT_VERSION}_linux_amd64.zip"
-curl -O https://releases.hashicorp.com/vault/${VAULT_VERSION}/${VAULT_ZIP}
-sudo unzip ${VAULT_ZIP}
-sudo mv vault ${BIN_DIR}
-rm ${VAULT_ZIP}
+VAULT_ZIP="vault_$VAULT_VERSION_linux_amd64.zip"
+curl -O https://releases.hashicorp.com/vault/$VAULT_VERSION/$VAULT_ZIP
+sudo unzip $VAULT_ZIP
+sudo mv vault $BIN_DIR
+rm $VAULT_ZIP
 
 # Set up Consul
 sudo useradd --system --home /etc/consul.d --shell /bin/false consul
@@ -58,7 +58,7 @@ bootstrap_expect = 1
 EOF
 
 # Create systemd service for Consul
-sudo cat > "${CONSUL_SYSTEMD_CONFIG_PATH}" << EOF
+sudo cat > "$CONSUL_SYSTEMD_CONFIG_PATH" << EOF
 [Unit]
 Description=HashiCorp Consul - A service mesh solution
 Documentation=https://www.consul.io/
@@ -68,7 +68,7 @@ After=network-online.target
 [Service]
 User=consul
 Group=consul
-ExecStart=${BIN_DIR}/consul agent -config-dir=/etc/consul.d/
+ExecStart=$BIN_DIR/consul agent -config-dir=/etc/consul.d/
 ExecReload=/bin/kill --signal HUP \$MAINPID
 KillMode=process
 Restart=on-failure

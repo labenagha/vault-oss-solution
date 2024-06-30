@@ -32,7 +32,6 @@ echo "session_name=${session_name}"
 echo "initial_aws_access_key_id=${USER_AWS_ACCESS_KEY_ID}"
 echo "initial_aws_secret_access_key=${USER_AWS_SECRET_ACCESS_KEY}"
 echo "aws_region=${AWS_DEFAULT_REGION}"
-echo "iam_user_name=${iam_user_name}"
 
 
 # Install prerequisites
@@ -57,7 +56,7 @@ cat > trust-policy.json << EOL
       "Effect": "Allow",
       "Principal": {
         "Service": "ec2.amazonaws.com",
-        "AWS": "arn:aws:iam::${account_id}:user/${iam_user_name}"
+        "AWS": "arn:aws:iam::${account_id}:user/$iam_user_name"
       },
       "Action": "sts:AssumeRole"
     }

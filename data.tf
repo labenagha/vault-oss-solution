@@ -47,7 +47,7 @@ data "template_file" "vault_install" {
     session_name               = var.session_name
     default_port               = var.default_port
     USER_AWS_SECRET_ACCESS_KEY = var.USER_AWS_SECRET_ACCESS_KEY
-    USER_AWS_ACCESS_KEY_ID     = var.USER_AWS_ACCESS_KEY_ID
+    AWS_ACCESS_KEY_ID          = var.USER_AWS_ACCESS_KEY_ID
     AWS_DEFAULT_REGION         = var.AWS_DEFAULT_REGION
   }
 }

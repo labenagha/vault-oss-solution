@@ -29,10 +29,11 @@ echo "account_id=${account_id}"
 echo "role_name=${role_name}"
 echo "policy_arn=${policy_arn}"
 echo "session_name=${session_name}"
-echo "initial_aws_access_key_id=${initial_aws_access_key_id}"
-echo "initial_aws_secret_access_key=${initial_aws_secret_access_key}"
+echo "initial_aws_access_key_id=${USER_AWS_ACCESS_KEY_ID}"
+echo "initial_aws_secret_access_key=${USER_AWS_SECRET_ACCESS_KEY}"
 echo "aws_region=${aws_region}"
 echo "iam_user_name=${iam_user_name}"
+
 
 # Install prerequisites
 sudo apt-get update

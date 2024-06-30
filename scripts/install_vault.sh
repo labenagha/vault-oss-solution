@@ -78,7 +78,7 @@ check_installed() {
 }
 
 create_vault_config() {
-  local tls_cert_file="${TLS_CERT_FILE}"
+  local TLS_CERT="${TLS_CERT}"
   local tls_key_file="${TLS_KEY_FILE}"
   local enable_auto_unseal="${ENABLE_AUTO_UNSEAL}"
   local auto_unseal_kms_key_id="${AUTO_UNSEAL_KMS_KEY_ID}"
@@ -99,7 +99,7 @@ create_vault_config() {
   {
     echo "listener \"tcp\" {"
     echo "  address = \"0.0.0.0:$DEFAULT_PORT\""
-    echo "  tls_cert_file = \"${TLS_CERT_FILE}\""
+    echo "  TLS_CERT = \"${TLS_CERT}\""
     echo "  tls_key_file = \"${TLS_KEY_FILE}\""
     echo "}"
 
@@ -183,7 +183,7 @@ start_vault() {
 }
 
 main() {
-  if [[ -z "${TLS_CERT_FILE}" || -z "${TLS_KEY_FILE}" ]]; then
+  if [[ -z "${TLS_CERT}" || -z "${TLS_KEY_FILE}" ]]; then
     log "ERROR" "TLS cert and key files are required."
     exit 1
   fi

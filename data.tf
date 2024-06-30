@@ -29,7 +29,7 @@ data "template_file" "gh_runner_install" {
 data "template_file" "vault_install" {
   template = file("${path.module}/scripts/install_vault.sh")
   vars = {
-    tls_cert_file              = var.TLS_CERT_FILE
+    TLS_CERT                   = var.TLS_CERT
     tls_key_file               = var.TLS_KEY_FILE
     enable_auto_unseal         = var.ENABLE_AUTO_UNSEAL
     auto_unseal_kms_key_id     = var.AUTO_UNSEAL_KMS_KEY_ID

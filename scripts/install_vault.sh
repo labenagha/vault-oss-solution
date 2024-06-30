@@ -13,15 +13,21 @@ DEFAULT_LOG_LEVEL="info"
 
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
-log() {
-  local level="$1"
-  local message="$2"
-  echo "$(date +"%Y-%m-%d %H:%M:%S") [$level] $message"
+# log() {
+#   local level="$1"
+#   local message="$2"
+#   echo "$(date +"%Y-%m-%d %H:%M:%S") [$level] $message"
+# }
+
+function install_preq() {
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  sudo unzip awscliv2.zip
+  sudo ./aws/install
 }
 
 create_iam_role() {
-  local role_name="$1"
-  local policy_arn="$2"
+  local role_name="${role_name}"
+  local policy_arn="${policy_arn}"
 
   log "INFO" "Creating IAM role ${role_name}"
   cat > trust-policy.json << EOL
@@ -45,9 +51,9 @@ EOL
 }
 
 assume_role() {
-  local account_id="$1"
-  local role_name="$2"
-  local session_name="$3"
+  local account_id="${account_id}"
+  local role_name="${role_name}"
+  local session_name=${session_name}
 
   log "INFO" "Assuming IAM role ${role_name}"
   aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
@@ -128,9 +134,9 @@ create_vault_config() {
 create_systemd_config() {
   local systemd_config_path="$SYSTEMD_CONFIG_PATH"
   local vault_config_dir="${CONFIG_DIR}"
-  local vault_bin_dir="$BIN_DIR"
+  local vault_bin_dir="${BIN_DIR}"
   local log_level="$DEFAULT_LOG_LEVEL"
-  local user="$USER"
+  local user="${USER}"
 
   log "INFO" "Creating systemd config file at $systemd_config_path"
 
@@ -183,7 +189,7 @@ main() {
   fi
 
   check_installed "systemctl"
-  check_installed "aws"
+  # check_installed "aws"
   check_installed "curl"
   check_installed "jq"
 

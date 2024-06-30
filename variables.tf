@@ -314,7 +314,7 @@ variable "scaling_policies" {
   default     = {}
 }
 
-variable "tls_cert_file" {
+variable "TLS_CERT_FILE" {
   description = "Path to the TLS certificate file"
   default     = <<EOF
 -----BEGIN CERTIFICATE-----
@@ -356,7 +356,7 @@ w4jdfsYicJqaEOFATlqzJhvob9I=
 EOF
 }
 
-variable "tls_key_file" {
+variable "TLS_KEY_FILE" {
   description = "Path to the TLS key file"
   default     = <<EOF
   -----BEGIN PRIVATE KEY-----
@@ -390,25 +390,25 @@ vp5I+W5Wu1805PCZ4Sl7
 EOF
 }
 
-variable "enable_auto_unseal" {
+variable "ENABLE_AUTO_UNSEAL" {
   description = "Enable AWS KMS auto unseal"
   type        = bool
 }
 
-variable "auto_unseal_kms_key_id" {
+variable "AUTO_UNSEAL_KMS_KEY_ID" {
   description = "AWS KMS Key ID for auto unseal"
 }
 
-variable "auto_unseal_kms_key_region" {
+variable "AUTO_UNSEAL_KMS_KEY_REGION" {
   description = "AWS region for the KMS key"
 }
 
-variable "config_dir" {
+variable "CONFIG_DIR" {
   description = "Directory for Vault configuration"
   default     = "/etc/vault"
 }
 
-variable "bin_dir" {
+variable "BIN_DIR" {
   description = "Directory for Vault binary"
   default     = "/usr/local/bin"
 }
@@ -418,23 +418,23 @@ variable "user" {
   default     = "vault"
 }
 
-variable "enable_s3_backend" {
+variable "ENABLE_S3_BACKEND" {
   description = "Enable S3 backend for Vault storage"
   type        = bool
   default     = false
 }
 
-variable "s3_bucket" {
+variable "S3_BUCKET" {
   description = "S3 bucket for Vault storage"
   default     = ""
 }
 
-variable "s3_bucket_path" {
+variable "S3_BUCKET_PATH" {
   description = "S3 bucket path for Vault storage"
   default     = ""
 }
 
-variable "s3_bucket_region" {
+variable "S3_BUCKET_REGION" {
   description = "AWS region for the S3 bucket"
   default     = ""
 }

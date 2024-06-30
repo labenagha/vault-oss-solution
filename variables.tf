@@ -401,7 +401,6 @@ variable "default_port" {
 variable "USER_AWS_ACCESS_KEY_ID" {
   description = "Initial AWS access key ID"
   type        = string
-  default     = "AKIAS5NG5ALS6Y6SB4BO"
 }
 
 variable "USER_AWS_SECRET_ACCESS_KEY" {

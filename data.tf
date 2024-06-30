@@ -58,4 +58,3 @@ data "template_file" "user_data" {
     greeting = "Welcome To Nginx UI"
   }
 }
-

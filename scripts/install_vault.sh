@@ -7,17 +7,9 @@ set -x
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
-
 DEFAULT_PORT="${default_port}"
 DEFAULT_LOG_LEVEL="info"
-
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
-
-# log() {
-#   local level="$1"
-#   local message="$2"
-#   echo "$(date +"%Y-%m-%d %H:%M:%S") [$level] $message"
-# }
 
 function install_preq() {
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -29,7 +21,6 @@ create_iam_role() {
   local role_name="${role_name}"
   local policy_arn="${policy_arn}"
 
-  log "INFO" "Creating IAM role ${role_name}"
   cat > trust-policy.json << EOL
 {
   "Version": "2012-10-17",
@@ -55,12 +46,11 @@ assume_role() {
   local role_name="${role_name}"
   local session_name=${session_name}
 
-  log "INFO" "Assuming IAM role ${role_name}"
   aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
 
-  export AWS_ACCESS_KEY_ID=$(cat assume-role-output.json | jq -r '.Credentials.AccessKeyId')
-  export AWS_SECRET_ACCESS_KEY=$(cat assume-role-output.json | jq -r '.Credentials.SecretAccessKey')
-  export AWS_SESSION_TOKEN=$(cat assume-role-output.json | jq -r '.Credentials.SessionToken')
+  export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' < assume-role-output.json)
+  export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' < assume-role-output.json)
+  export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' < assume-role-output.json)
   
   rm assume-role-output.json
 }
@@ -72,7 +62,6 @@ get_instance_ip_address() {
 check_installed() {
   local name="$1"
   if ! command -v "$name" &> /dev/null; then
-    log "ERROR" "The binary '$name' is required but not installed."
     exit 1
   fi
 }
@@ -94,7 +83,6 @@ create_vault_config() {
   instance_ip_address=$(get_instance_ip_address)
 
   local config_path="$config_dir/$VAULT_CONFIG_FILE"
-  log "INFO" "Creating Vault config file at $config_path"
 
   {
     echo "listener \"tcp\" {"
@@ -138,8 +126,6 @@ create_systemd_config() {
   local log_level="$DEFAULT_LOG_LEVEL"
   local user="${USER}"
 
-  log "INFO" "Creating systemd config file at $systemd_config_path"
-
   {
     echo "[Unit]"
     echo "Description=HashiCorp Vault - A tool for managing secrets"
@@ -176,7 +162,6 @@ create_systemd_config() {
 }
 
 start_vault() {
-  log "INFO" "Reloading systemd config and starting Vault"
   systemctl daemon-reload
   systemctl enable vault.service
   systemctl restart vault.service
@@ -184,12 +169,10 @@ start_vault() {
 
 main() {
   if [[ -z "${TLS_CERT}" || -z "${TLS_KEY_FILE}" ]]; then
-    log "ERROR" "TLS cert and key files are required."
     exit 1
   fi
 
   check_installed "systemctl"
-  # check_installed "aws"
   check_installed "curl"
   check_installed "jq"
 

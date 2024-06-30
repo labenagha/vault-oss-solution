@@ -7,10 +7,8 @@ set -x
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
-
 DEFAULT_PORT="${default_port}"
 DEFAULT_LOG_LEVEL="info"
-
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
 # Install prerequisites
@@ -47,7 +45,6 @@ rm trust-policy.json
 
 # Assume IAM role
 aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
-
 export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' < assume-role-output.json)
 export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' < assume-role-output.json)
 export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' < assume-role-output.json)

@@ -10,7 +10,6 @@ DEFAULT_LOG_LEVEL="info"
 iam_user_name="VaultAdminUser"
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
- 
 default_port=${default_port}
 TLS_CERT=${TLS_CERT}
 TLS_KEY_FILE=${TLS_KEY_FILE}
@@ -38,7 +37,6 @@ sudo apt-get install -y unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
 sudo ./aws/install
-
 
 export AWS_ACCESS_KEY_ID=${USER_AWS_ACCESS_KEY_ID}
 export AWS_SECRET_ACCESS_KEY=${USER_AWS_SECRET_ACCESS_KEY}
@@ -130,7 +128,11 @@ api_addr = "https://$instance_ip_address:$DEFAULT_PORT"
 ui = true
 EOF
 
-sudo chown "$USER:$USER" "$config_path"
+# Create vault user and group
+sudo groupadd --system vault
+sudo useradd --system --home /etc/vault --shell /bin/false --gid vault vault
+
+sudo chown vault:vault "$config_path"
 
 # Create systemd service config
 sudo cat > "$SYSTEMD_CONFIG_PATH" << EOF
@@ -141,8 +143,8 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-User=$USER
-Group=$USER
+User=vault
+Group=vault
 ProtectSystem=full
 ProtectHome=read-only
 PrivateTmp=yes

@@ -59,7 +59,7 @@ done
 
 # Create Vault config
 mkdir -p "${CONFIG_DIR}"
-config_path="${CONFIG_DIR}/${VAULT_CONFIG_FILE}"
+config_path="${CONFIG_DIR}/$VAULT_CONFIG_FILE"
 cat > "$config_path" << EOF
 listener "tcp" {
   address = "0.0.0.0:$DEFAULT_PORT"

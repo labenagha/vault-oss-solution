@@ -397,3 +397,21 @@ variable "default_port" {
   type        = number
   default     = 8200
 }
+
+variable "AWS_ACCESS_KEY_ID" {
+  description = "Initial AWS access key ID"
+  type        = string
+  default     = "AKIAS5NG5ALSSPZOE4X5"
+}
+
+variable "aws_secret_access_key" {
+  description = "Initial AWS secret access key"
+  type        = string
+  sensitive   = true
+}
+
+variable "AWS_DEFAULT_REGION" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}

@@ -20,6 +20,11 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 sudo unzip awscliv2.zip
 sudo ./aws/install
 
+# Configure AWS CLI with initial credentials
+export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+export AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
+export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}"
+
 # Create IAM role
 cat > trust-policy.json << EOL
 {
@@ -58,6 +63,10 @@ for cmd in systemctl curl jq; do
     exit 1
   fi
 done
+
+if [[ -z "${TLS_CERT}" || -z "${TLS_KEY_FILE}" ]]; then
+    exit 1
+fi
 
 # Create Vault config
 mkdir -p "${CONFIG_DIR}"

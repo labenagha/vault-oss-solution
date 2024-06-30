@@ -15,8 +15,8 @@ env:
   TF_VAR_public_key: ${{ secrets.PUBLIC_KEY }}
   TF_VAR_RUNNER_SHA: ${{ secrets.RUNNER_SHA }}
   TF_VAR_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  TF_VAR_tls_cert_file: ${{ secrets.TLS_CERT }}
-  TF_VAR_tls_key_file: ${{ secrets.TLS_KEY }}
+  # TF_VAR_tls_cert_file: ${{ secrets.TLS_CERT }}
+  # TF_VAR_tls_key_file: ${{ secrets.TLS_KEY }}
   TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
   TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 

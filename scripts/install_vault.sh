@@ -1,5 +1,4 @@
 #!/bin/bash
-
 exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -x
 
@@ -9,7 +8,6 @@ DEFAULT_PORT="${default_port}"
 DEFAULT_LOG_LEVEL="info"
 iam_user_name="VaultAdminUser"
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
-
 default_port="${default_port}"
 TLS_CERT="${TLS_CERT}"
 TLS_KEY_FILE="${TLS_KEY_FILE}"
@@ -62,14 +60,12 @@ EOL
 aws iam create-role --role-name "${role_name}" --assume-role-policy-document file://trust-policy.json
 aws iam attach-role-policy --role-name "${role_name}" --policy-arn "${policy_arn}"
 rm trust-policy.json
-
 # Assume IAM role
 aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
 export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' < assume-role-output.json)
 export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' < assume-role-output.json)
 export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' < assume-role-output.json)
 rm assume-role-output.json
-
 # Get instance IP address
 instance_ip_address=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4")
 
@@ -132,7 +128,6 @@ EOF
 # Create vault user and group
 sudo groupadd --system vault
 sudo useradd --system --home /etc/vault --shell /bin/false --gid vault vault
-
 sudo chown vault:vault "$config_path"
 
 # Create systemd service config

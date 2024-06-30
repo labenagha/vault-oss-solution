@@ -3,27 +3,6 @@
 exec > >(sudo tee -a /var/log/vault_install.log) 2>&1
 set -x
 
-echo "default_port=${default_port}"
-echo "TLS_CERT=${TLS_CERT}"
-echo "TLS_KEY_FILE=${TLS_KEY_FILE}"
-# echo "ENABLE_AUTO_UNSEAL=${ENABLE_AUTO_UNSEAL}"
-echo "AUTO_UNSEAL_KMS_KEY_ID=${AUTO_UNSEAL_KMS_KEY_ID}"
-# echo "AUTO_UNSEAL_KMS_KEY_REGION=${AUTO_UNSEAL_KMS_KEY_REGION}"
-# echo "CONFIG_DIR=${CONFIG_DIR}"
-# echo "BIN_DIR=${BIN_DIR}"
-# echo "USER=${USER}"
-echo "ENABLE_S3_BACKEND=${ENABLE_S3_BACKEND}"
-echo "S3_BUCKET=${S3_BUCKET}"
-# echo "S3_BUCKET_PATH=${S3_BUCKET_PATH}"
-# echo "S3_BUCKET_REGION=${S3_BUCKET_REGION}"
-echo "account_id=${account_id}"
-echo "role_name=${role_name}"
-echo "policy_arn=${policy_arn}"
-echo "session_name=${session_name}"
-echo "initial_aws_access_key_id=${USER_AWS_ACCESS_KEY_ID}"
-echo "initial_aws_secret_access_key=${USER_AWS_SECRET_ACCESS_KEY}"
-echo "aws_region=${AWS_DEFAULT_REGION}"
-
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
 DEFAULT_PORT="${default_port}"
@@ -76,13 +55,13 @@ rm assume-role-output.json
 # Get instance IP address
 instance_ip_address=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4")
 
-# # Check if required binaries are installed
-# for cmd in systemctl curl jq; do
-#   if ! command -v "$cmd" &> /dev/null; then
-#     echo "ERROR: The binary '$cmd' is required but not installed."
-#     exit 1
-#   fi
-# done
+# Check if required binaries are installed
+for cmd in systemctl curl jq; do
+  if ! command -v "$cmd" &> /dev/null; then
+    echo "ERROR: The binary '$cmd' is required but not installed."
+    exit 1
+  fi
+done
 
 if [[ -z "${TLS_CERT}" || -z "${TLS_KEY_FILE}" ]]; then
     exit 1

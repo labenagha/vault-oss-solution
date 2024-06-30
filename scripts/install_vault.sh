@@ -13,7 +13,7 @@ iam_user_name="VaultAdminUser"
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
 echo "default_port=${default_port}"
-echo "TLS_CERT_FILE=${TLS_CERT_FILE}"
+echo "TLS_CERT=${TLS_CERT}"
 echo "TLS_KEY_FILE=${TLS_KEY_FILE}"
 echo "ENABLE_AUTO_UNSEAL=${ENABLE_AUTO_UNSEAL}"
 echo "AUTO_UNSEAL_KMS_KEY_ID=${AUTO_UNSEAL_KMS_KEY_ID}"

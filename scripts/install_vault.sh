@@ -99,7 +99,7 @@ create_vault_config() {
   {
     echo "listener \"tcp\" {"
     echo "  address = \"0.0.0.0:$DEFAULT_PORT\""
-    echo "  tls_cert_file = \"$tls_cert_file\""
+    echo "  tls_cert_file = \"${TLS_CERT_FILE}\""
     echo "  tls_key_file = \"$tls_key_file\""
     echo "}"
 

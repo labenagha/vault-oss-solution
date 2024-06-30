@@ -26,14 +26,14 @@ sudo unzip awscliv2.zip
 sudo ./aws/install
 
 # Install Consul
-CONSUL_ZIP="consul_$CONSUL_VERSION_linux_amd64.zip"
+CONSUL_ZIP="consul_1.11.1_linux_amd64.zip"
 curl -O https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ZIP
 sudo unzip $CONSUL_ZIP
 sudo mv consul $BIN_DIR
 rm $CONSUL_ZIP
 
 # Install Vault
-VAULT_ZIP="vault_$VAULT_VERSION_linux_amd64.zip"
+VAULT_ZIP="vault_1.17.1_linux_amd64.zip"
 curl -O https://releases.hashicorp.com/vault/$VAULT_VERSION/$VAULT_ZIP
 sudo unzip $VAULT_ZIP
 sudo mv vault $BIN_DIR

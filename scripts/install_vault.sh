@@ -86,7 +86,7 @@ export AWS_ACCESS_KEY_ID="${USER_AWS_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY="${USER_AWS_SECRET_ACCESS_KEY}"
 export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}"
 
-# Create IAM role
+
 sudo cat > trust-policy.json << EOL
 {
   "Version": "2012-10-17",
@@ -107,17 +107,15 @@ aws iam create-role --role-name "${role_name}" --assume-role-policy-document fil
 aws iam attach-role-policy --role-name "${role_name}" --policy-arn "${policy_arn}"
 rm trust-policy.json
 
-# Assume IAM role
+
 aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
 export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' < assume-role-output.json)
 export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' < assume-role-output.json)
 export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' < assume-role-output.json)
 rm assume-role-output.json
 
-# Get instance IP address
 instance_ip_address=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4")
 
-# Check if required binaries are installed
 for cmd in systemctl curl jq; do
   if ! command -v "$cmd" &> /dev/null; then
     echo "ERROR: The binary '$cmd' is required but not installed."
@@ -125,7 +123,6 @@ for cmd in systemctl curl jq; do
   fi
 done
 
-# Create OpenSSL config for generating the certificate
 sudo mkdir -p /etc/vault
 sudo cat > /etc/vault/openssl.cnf << EOF
 [ req ]
@@ -142,19 +139,19 @@ OU = TSR
 CN = $instance_ip_address
 
 [ v3_req ]
-keyUsage = keyEncipherment, dataEncipherment
+keyUsage = keyEncipherment, dataEncipherment, digitalSignature
 extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 
 [ alt_names ]
 IP.1 = $instance_ip_address
-DNS.1 = www.tsrlearning.link
 EOF
 
 # Generate TLS certificate and key
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/vault/vault.key -out /etc/vault/vault.crt -config /etc/vault/openssl.cnf
 sudo chown vault:vault /etc/vault/vault.crt /etc/vault/vault.key
-sudo chmod 640 /etc/vault/vault.crt /etc/vault/vault.key
+sudo chmod 644 /etc/vault/vault.crt 
+sudo chmod 644 /etc/vault/vault.key
 
 # Create Vault config
 sudo mkdir -p "$CONFIG_DIR"
@@ -220,7 +217,8 @@ sudo systemctl start vault.service
 sudo systemctl status vault.service
 
 # Initialize Vault
-export VAULT_ADDR="https://127.0.0.1:$DEFAULT_PORT"
+export VAULT_ADDR="https://$instance_ip_address:$DEFAULT_PORT"
 export VAULT_CACERT="/etc/vault/vault.crt"
 
-vault status -skip-tls-verify
+vault status -tls-skip-verify
+

@@ -7,21 +7,19 @@ set -x
 
 VAULT_CONFIG_FILE="default.hcl"
 SYSTEMD_CONFIG_PATH="/etc/systemd/system/vault.service"
+
 DEFAULT_PORT="${default_port}"
 DEFAULT_LOG_LEVEL="info"
+
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
-function install_preq() {
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  sudo unzip awscliv2.zip
-  sudo ./aws/install
-}
+# Install prerequisites
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo unzip awscliv2.zip
+sudo ./aws/install
 
-create_iam_role() {
-  local role_name="${role_name}"
-  local policy_arn="${policy_arn}"
-
-  cat > trust-policy.json << EOL
+# Create IAM role
+cat > trust-policy.json << EOL
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -36,153 +34,110 @@ create_iam_role() {
 }
 EOL
 
-  aws iam create-role --role-name "${role_name}" --assume-role-policy-document file://trust-policy.json
-  aws iam attach-role-policy --role-name "${role_name}" --policy-arn "${policy_arn}"
-  rm trust-policy.json
-}
+aws iam create-role --role-name "${role_name}" --assume-role-policy-document file://trust-policy.json
+aws iam attach-role-policy --role-name "${role_name}" --policy-arn "${policy_arn}"
+rm trust-policy.json
 
-assume_role() {
-  local account_id="${account_id}"
-  local role_name="${role_name}"
-  local session_name=${session_name}
+# Assume IAM role
+aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
 
-  aws sts assume-role --role-arn "arn:aws:iam::${account_id}:role/${role_name}" --role-session-name "${session_name}" > assume-role-output.json
+export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' < assume-role-output.json)
+export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' < assume-role-output.json)
+export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' < assume-role-output.json)
+rm assume-role-output.json
 
-  export AWS_ACCESS_KEY_ID=$(jq -r '.Credentials.AccessKeyId' < assume-role-output.json)
-  export AWS_SECRET_ACCESS_KEY=$(jq -r '.Credentials.SecretAccessKey' < assume-role-output.json)
-  export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' < assume-role-output.json)
-  
-  rm assume-role-output.json
-}
+# Get instance IP address
+instance_ip_address=$(curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4")
 
-get_instance_ip_address() {
-  curl --silent --location "$EC2_INSTANCE_METADATA_URL/local-ipv4"
-}
-
-check_installed() {
-  local name="$1"
-  if ! command -v "$name" &> /dev/null; then
+# Check if required binaries are installed
+for cmd in systemctl curl jq; do
+  if ! command -v "$cmd" &> /dev/null; then
+    echo "ERROR: The binary '$cmd' is required but not installed."
     exit 1
   fi
+done
+
+# Create Vault config
+mkdir -p "${CONFIG_DIR}"
+config_path="${CONFIG_DIR}/${VAULT_CONFIG_FILE}"
+cat > "$config_path" << EOF
+listener "tcp" {
+  address = "0.0.0.0:$DEFAULT_PORT"
+  tls_cert_file = "${TLS_CERT_FILE}"
+  tls_key_file = "${TLS_KEY_FILE}"
 }
+EOF
 
-create_vault_config() {
-  local TLS_CERT="${TLS_CERT}"
-  local tls_key_file="${TLS_KEY_FILE}"
-  local enable_auto_unseal="${ENABLE_AUTO_UNSEAL}"
-  local auto_unseal_kms_key_id="${AUTO_UNSEAL_KMS_KEY_ID}"
-  local auto_unseal_kms_key_region="${AUTO_UNSEAL_KMS_KEY_REGION}"
-  local config_dir="${CONFIG_DIR}"
-  local user="${USER}"
-  local enable_s3_backend="${ENABLE_S3_BACKEND}"
-  local s3_bucket="${S3_BUCKET}"
-  local s3_bucket_path="${S3_BUCKET_PATH}"
-  local s3_bucket_region="${S3_BUCKET_REGION}"
-
-  local instance_ip_address
-  instance_ip_address=$(get_instance_ip_address)
-
-  local config_path="$config_dir/$VAULT_CONFIG_FILE"
-
-  {
-    echo "listener \"tcp\" {"
-    echo "  address = \"0.0.0.0:$DEFAULT_PORT\""
-    echo "  TLS_CERT = \"${TLS_CERT}\""
-    echo "  tls_key_file = \"${TLS_KEY_FILE}\""
-    echo "}"
-
-    if [[ "$enable_auto_unseal" == "true" ]]; then
-      echo "seal \"awskms\" {"
-      echo "  kms_key_id = \"$auto_unseal_kms_key_id\""
-      echo "  region = \"$auto_unseal_kms_key_region\""
-      echo "}"
-    fi
-
-    if [[ "$enable_s3_backend" == "true" ]]; then
-      echo "storage \"s3\" {"
-      echo "  bucket = \"$s3_bucket\""
-      echo "  path   = \"$s3_bucket_path\""
-      echo "  region = \"$s3_bucket_region\""
-      echo "}"
-    else
-      echo "storage \"consul\" {"
-      echo "  address = \"127.0.0.1:8500\""
-      echo "  path = \"vault/\""
-      echo "}"
-    fi
-
-    echo "cluster_addr = \"https://$instance_ip_address:$((DEFAULT_PORT + 1))\""
-    echo "api_addr = \"https://$instance_ip_address:$DEFAULT_PORT\""
-    echo "ui = true"
-  } > "$config_path"
-
-  chown "$user:$user" "$config_path"
+if [[ "$ENABLE_AUTO_UNSEAL" == "true" ]]; then
+  cat >> "$config_path" << EOF
+seal "awskms" {
+  kms_key_id = "${AUTO_UNSEAL_KMS_KEY_ID}"
+  region = "${AUTO_UNSEAL_KMS_KEY_REGION}"
 }
+EOF
+fi
 
-create_systemd_config() {
-  local systemd_config_path="$SYSTEMD_CONFIG_PATH"
-  local vault_config_dir="${CONFIG_DIR}"
-  local vault_bin_dir="${BIN_DIR}"
-  local log_level="$DEFAULT_LOG_LEVEL"
-  local user="${USER}"
-
-  {
-    echo "[Unit]"
-    echo "Description=HashiCorp Vault - A tool for managing secrets"
-    echo "Documentation=https://www.vaultproject.io/docs/"
-    echo "Requires=network-online.target"
-    echo "After=network-online.target"
-
-    echo "[Service]"
-    echo "User=$user"
-    echo "Group=$user"
-    echo "ProtectSystem=full"
-    echo "ProtectHome=read-only"
-    echo "PrivateTmp=yes"
-    echo "PrivateDevices=yes"
-    echo "SecureBits=keep-caps"
-    echo "AmbientCapabilities=CAP_IPC_LOCK"
-    echo "Capabilities=CAP_IPC_LOCK+ep"
-    echo "CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK"
-    echo "NoNewPrivileges=yes"
-    echo "ExecStart=$vault_bin_dir/vault server -config=$vault_config_dir -log-level=$log_level"
-    echo "ExecReload=/bin/kill --signal HUP \$MAINPID"
-    echo "KillMode=process"
-    echo "KillSignal=SIGINT"
-    echo "Restart=on-failure"
-    echo "RestartSec=5"
-    echo "TimeoutStopSec=30"
-    echo "StartLimitIntervalSec=60"
-    echo "StartLimitBurst=3"
-    echo "LimitNOFILE=65536"
-
-    echo "[Install]"
-    echo "WantedBy=multi-user.target"
-  } > "$systemd_config_path"
+if [[ "$ENABLE_S3_BACKEND" == "true" ]]; then
+  cat >> "$config_path" << EOF
+storage "s3" {
+  bucket = "${S3_BUCKET}"
+  path   = "${S3_BUCKET_PATH}"
+  region = "${S3_BUCKET_REGION}"
 }
-
-start_vault() {
-  systemctl daemon-reload
-  systemctl enable vault.service
-  systemctl restart vault.service
+EOF
+else
+  cat >> "$config_path" << EOF
+storage "consul" {
+  address = "127.0.0.1:8500"
+  path = "vault/"
 }
+EOF
+fi
 
-main() {
-  if [[ -z "${TLS_CERT}" || -z "${TLS_KEY_FILE}" ]]; then
-    exit 1
-  fi
+cat >> "$config_path" << EOF
+cluster_addr = "https://$instance_ip_address:$((DEFAULT_PORT + 1))"
+api_addr = "https://$instance_ip_address:$DEFAULT_PORT"
+ui = true
+EOF
 
-  check_installed "systemctl"
-  check_installed "curl"
-  check_installed "jq"
+chown "$USER:$USER" "$config_path"
 
-  create_iam_role "$ROLE_NAME" "$POLICY_ARN"
-  assume_role "$ACCOUNT_ID" "$ROLE_NAME" "$SESSION_NAME"
+# Create systemd service config
+cat > "$SYSTEMD_CONFIG_PATH" << EOF
+[Unit]
+Description=HashiCorp Vault - A tool for managing secrets
+Documentation=https://www.vaultproject.io/docs/
+Requires=network-online.target
+After=network-online.target
 
-  mkdir -p "${CONFIG_DIR}"
-  create_vault_config
-  create_systemd_config
-  start_vault
-}
+[Service]
+User=$USER
+Group=$USER
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+SecureBits=keep-caps
+AmbientCapabilities=CAP_IPC_LOCK
+Capabilities=CAP_IPC_LOCK+ep
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+NoNewPrivileges=yes
+ExecStart=$BIN_DIR/vault server -config=$CONFIG_DIR -log-level=$DEFAULT_LOG_LEVEL
+ExecReload=/bin/kill --signal HUP \$MAINPID
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StartLimitIntervalSec=60
+StartLimitBurst=3
+LimitNOFILE=65536
 
-main
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Reload systemd config and start Vault
+systemctl daemon-reload
+systemctl enable vault.service
+systemctl restart vault.service

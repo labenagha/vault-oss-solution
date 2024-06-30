@@ -63,7 +63,7 @@ config_path="${CONFIG_DIR}/$VAULT_CONFIG_FILE"
 cat > "$config_path" << EOF
 listener "tcp" {
   address = "0.0.0.0:$DEFAULT_PORT"
-  tls_cert_file = "${TLS_CERT_FILE}"
+  tls_cert_file = "${TLS_CERT}"
   tls_key_file = "${TLS_KEY_FILE}"
 }
 EOF

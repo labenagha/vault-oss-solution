@@ -14,6 +14,8 @@ DEFAULT_LOG_LEVEL="info"
 EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 
 # Install prerequisites
+sudo apt-get update
+sudo apt-get install -y unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
 sudo ./aws/install

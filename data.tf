@@ -36,7 +36,7 @@ data "template_file" "vault_install" {
     auto_unseal_kms_key_region = var.AUTO_UNSEAL_KMS_KEY_REGION
     config_dir                 = var.CONFIG_DIR
     bin_dir                    = var.BIN_DIR
-    user                       = var.user
+    user                       = var.USER
     enable_s3_backend          = var.ENABLE_S3_BACKEND
     s3_bucket                  = var.S3_BUCKET
     s3_bucket_path             = var.S3_BUCKET_PATH

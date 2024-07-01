@@ -1,5 +1,4 @@
 name: Infra deploy
-
 on:
   push:
     branches:
@@ -37,12 +36,12 @@ jobs:
         with:
           terraform_version: 1.6.5
 
-      - name: Print Environment Variables for Debugging
-        run: |
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          echo "TLS_CERT=${{ secrets.TLS_CERT }}"
-          echo "TLS_KEY=${{ secrets.TLS_KEY }}"
+      # - name: Print Environment Variables for Debugging
+      #   run: |
+      #     echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}"
+      #     echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      #     echo "TLS_CERT=${{ secrets.TLS_CERT }}"
+      #     echo "TLS_KEY=${{ secrets.TLS_KEY }}"
 
       - name: Configure AWS credentials
         env:

@@ -4,7 +4,7 @@ set -x
 
 USER="consul"
 BIN_DIR="/usr/local/bin/$USER"
-CONSUL_VERSION="${consul_version}"
+consul_version="${consul_version}"
 USER_SYSTEMD_CONFIG_PATH="/etc/systemd/system/$USER.service"
 
 export AWS_ACCESS_KEY_ID="${aws_access_key_id}"
@@ -13,8 +13,8 @@ export AWS_DEFAULT_REGION="${aws_default_region}"
 
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
 
-CONSUL_ZIP="$USER_${CONSUL_VERSION}_linux_amd64.zip"
-curl -O "https://releases.hashicorp.com/$USER/${CONSUL_VERSION}/${CONSUL_ZIP}"
+CONSUL_ZIP="$USER_${consul_version}_linux_amd64.zip"
+curl -O "https://releases.hashicorp.com/$USER/${consul_version}/${CONSUL_ZIP}"
 sudo unzip "${CONSUL_ZIP}" -d /usr/local/bin/
 rm "${CONSUL_ZIP}"
 

@@ -15,11 +15,8 @@ echo "node_name=${node_name}"
 echo "datacenter=${datacenter}"
 echo "consul_version=${consul_version}"
 echo "bootstrap_expect=${bootstrap_expect}"
-echo "instance_ip_address=${instance_ip_address}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
-
-
-instance_ip_address=$(curl --silent --location "$ec2_instance_metadata_url/local-ipv4")
+echo "instance_ip_address=$(curl --silent --location "$ec2_instance_metadata_url/local-ipv4")"
 
 CONSUL_ZIP="$USER_$consul_version_linux_amd64.zip"
 curl -O "https://releases.hashicorp.com/$USER/$consul_version/$CONSUL_ZIP"

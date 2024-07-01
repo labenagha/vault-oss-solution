@@ -102,7 +102,7 @@ create_scaling_policy = true
 ########## Consul userdata variables ########
 #############################################
 
-user                      = "consul"
+# user                      = "consul"
 consul_version            = "1.9.5"
 aws_access_key_id         = "AKIAS5NG5ALSSPZOE4X5"
 aws_default_region        = "us-west-2"

@@ -26,27 +26,22 @@ data "template_file" "gh_runner_install" {
   }
 }
 
-data "template_file" "vault_install" {
-  template = file("${path.module}/scripts/install_vault.sh")
+data "template_file" "consul_install" {
+  template = file("${path.module}/scripts/consul_install.tpl")
   vars = {
-    ENABLE_AUTO_UNSEAL         = var.ENABLE_AUTO_UNSEAL
-    AUTO_UNSEAL_KMS_KEY_ID     = var.AUTO_UNSEAL_KMS_KEY_ID
-    AUTO_UNSEAL_KMS_KEY_REGION = var.AUTO_UNSEAL_KMS_KEY_REGION
-    ENABLE_S3_BACKEND          = var.ENABLE_S3_BACKEND
-    S3_BUCKET                  = var.S3_BUCKET
-    S3_BUCKET_PATH             = var.S3_BUCKET_PATH
-    S3_BUCKET_REGION           = var.S3_BUCKET_REGION
-    account_id                 = var.account_id
-    role_name                  = var.role_name
-    policy_arn                 = var.policy_arn
-    session_name               = var.session_name
-    USER_AWS_SECRET_ACCESS_KEY = var.USER_AWS_SECRET_ACCESS_KEY
-    USER_AWS_ACCESS_KEY_ID     = var.USER_AWS_ACCESS_KEY_ID
-    AWS_DEFAULT_REGION         = var.AWS_DEFAULT_REGION
-    VAULT_VERSION              = var.VAULT_VERSION
-    CONSUL_VERSION             = var.CONSUL_VERSION
+    user                      = var.user
+    consul_version            = var.consul_version
+    aws_access_key_id         = var.aws_access_key_id
+    aws_secret_access_key     = var.aws_secret_access_key
+    aws_default_region        = var.aws_default_region
+    ec2_instance_metadata_url = var.ec2_instance_metadata_url
+    node_name                 = var.node_name
+    datacenter                = var.datacenter
+    bootstrap_expect          = var.bootstrap_expect
+    # retry_join               = var.retry_join
   }
 }
+
 
 
 data "template_file" "user_data" {

@@ -314,82 +314,57 @@ variable "scaling_policies" {
   default     = {}
 }
 
-variable "ENABLE_AUTO_UNSEAL" {
-  description = "Enable AWS KMS auto unseal"
-  type        = bool
-}
+#############################################
+########## Consul userdata variables ########
+#############################################
 
-variable "AUTO_UNSEAL_KMS_KEY_ID" {
-  description = "AWS KMS Key ID for auto unseal"
-}
-
-variable "AUTO_UNSEAL_KMS_KEY_REGION" {
-  description = "AWS region for the KMS key"
-}
-
-variable "ENABLE_S3_BACKEND" {
-  description = "Enable S3 backend for Vault storage"
-  type        = bool
-  default     = false
-}
-
-variable "S3_BUCKET" {
-  description = "S3 bucket for Vault storage"
-  default     = ""
-}
-
-variable "S3_BUCKET_PATH" {
-  description = "S3 bucket path for Vault storage"
-  default     = ""
-}
-
-variable "S3_BUCKET_REGION" {
-  description = "AWS region for the S3 bucket"
-  default     = ""
-}
-
-variable "account_id" {
-  description = "AWS Account ID"
-}
-
-variable "role_name" {
-  description = "IAM role name"
-  default     = "VaultAdminRole"
-}
-
-variable "policy_arn" {
-  description = "IAM policy ARN"
-  default     = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
-
-variable "session_name" {
-  description = "IAM session name"
-  default     = "VaultSession"
-}
-
-variable "USER_AWS_ACCESS_KEY_ID" {
-  description = "Initial AWS access key ID"
+variable "user" {
+  description = "The user for the Consul installation"
   type        = string
 }
 
-variable "USER_AWS_SECRET_ACCESS_KEY" {
-  description = "Initial AWS secret access key"
+variable "consul_version" {
+  description = "The version of Consul to install"
+  type        = string
+}
+
+variable "aws_access_key_id" {
+  description = "AWS Access Key ID"
+  type        = string
+}
+
+variable "aws_secret_access_key" {
+  description = "AWS Secret Access Key"
   type        = string
   sensitive   = true
 }
 
-variable "AWS_DEFAULT_REGION" {
-  description = "AWS region"
+variable "aws_default_region" {
+  description = "AWS Default Region"
   type        = string
-  default     = "us-east-1"
 }
 
-variable "VAULT_VERSION" {
+variable "ec2_instance_metadata_url" {
+  description = "URL to retrieve EC2 instance metadata"
   type        = string
-  description = "VAULT version"
 }
 
-variable "CONSUL_VERSION" {
+variable "node_name" {
+  description = "Name of the node"
   type        = string
-  description = "CONSUL version"
 }
+
+variable "datacenter" {
+  description = "Name of the datacenter"
+  type        = string
+}
+
+variable "bootstrap_expect" {
+  description = "Number of server nodes to wait for before bootstrapping"
+  type        = number
+}
+
+# variable "retry_join" {
+#   description = "Address to retry joining the Consul cluster"
+#   type        = string
+# }

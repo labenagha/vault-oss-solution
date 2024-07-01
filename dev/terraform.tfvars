@@ -98,17 +98,16 @@ create_scaling_policy = true
 #   }
 # }
 
-ENABLE_AUTO_UNSEAL         = true
-AUTO_UNSEAL_KMS_KEY_ID     = "7c0818ce-a3a0-43b9-9008-5b5e48c216e2"
-AUTO_UNSEAL_KMS_KEY_REGION = "us-east-1"
-ENABLE_S3_BACKEND          = true
-S3_BUCKET                  = "consul-vault-cluster-dev"
-S3_BUCKET_PATH             = ""
-S3_BUCKET_REGION           = "us-east-1"
-account_id                 = "200602878693"
-role_name                  = "VaultAdminRole"
-policy_arn                 = "arn:aws:iam::aws:policy/AdministratorAccess"
-session_name               = "VaultSession"
-USER_AWS_ACCESS_KEY_ID     = "AKIAS5NG5ALS6Y6SB4BO"
-VAULT_VERSION              = "1.17.1"
-CONSUL_VERSION             = "1.11.1"
+#############################################
+########## Consul userdata variables ########
+#############################################
+
+user                      = "consul"
+consul_version            = "1.9.5"
+aws_access_key_id         = "AKIAS5NG5ALSSPZOE4X5"
+aws_default_region        = "us-west-2"
+ec2_instance_metadata_url = "http://169.254.169.254/latest/meta-data"
+node_name                 = "consul-node-1"
+datacenter                = "dc1"
+bootstrap_expect          = 2
+

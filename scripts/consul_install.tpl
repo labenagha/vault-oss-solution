@@ -43,7 +43,7 @@ sudo tee /usr/local/etc/$USER/$USER_s1.json > /dev/null << EOF
   "data_dir": "/var/$USER/data",
   "bind_addr": "0.0.0.0",
   "client_addr": "0.0.0.0",
-  "advertise_addr": "$instance_ip_address}",
+  "advertise_addr": "$instance_ip_address",
   "bootstrap_expect": $bootstrap_expect,
   "retry_join": ["$instance_ip_address"],
   "ui": true,

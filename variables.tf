@@ -314,62 +314,57 @@ variable "scaling_policies" {
   default     = {}
 }
 
-variable "port" {
-  description = "Port for Vault to listen on"
-  type        = number
-  default     = 8200
-}
+#############################################
+########## Consul userdata variables ########
+#############################################
 
-variable "log_level" {
-  description = "Log level for Vault"
+# variable "user" {
+#   description = "The user for the Consul installation"
+#   type        = string
+# }
+
+variable "consul_version" {
+  description = "The version of Consul to install"
   type        = string
-  default     = "info"
-}
-
-variable "tls_cert" {
-  description = "TLS certificate for Vault"
-  type        = string
-}
-
-variable "tls_key" {
-  description = "TLS key for Vault"
-  type        = string
-}
-
-variable "s3_bucket" {
-  description = "S3 bucket for Vault storage"
-  type        = string
-  default     = "consul-vault-cluster-dev"
-}
-
-variable "s3_bucket_region" {
-  description = "AWS region for the S3 bucket"
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "enable_s3_backend" {
-  description = "Enable S3 backend for Vault"
-  type        = bool
-  default     = true
-}
-
-variable "user" {
-  description = "User to run Vault"
-  type        = string
-  default     = "vault"
 }
 
 variable "aws_access_key_id" {
   description = "AWS Access Key ID"
   type        = string
-  sensitive   = true
-  default     = ""
 }
 
 variable "aws_secret_access_key" {
   description = "AWS Secret Access Key"
   type        = string
   sensitive   = true
-  default     = ""
 }
+
+variable "aws_default_region" {
+  description = "AWS Default Region"
+  type        = string
+}
+
+variable "ec2_instance_metadata_url" {
+  description = "URL to retrieve EC2 instance metadata"
+  type        = string
+}
+
+variable "node_name" {
+  description = "Name of the node"
+  type        = string
+}
+
+variable "datacenter" {
+  description = "Name of the datacenter"
+  type        = string
+}
+
+variable "bootstrap_expect" {
+  description = "Number of server nodes to wait for before bootstrapping"
+  type        = number
+}
+
+# variable "retry_join" {
+#   description = "Address to retry joining the Consul cluster"
+#   type        = string
+# }

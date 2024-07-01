@@ -1,5 +1,5 @@
-resource "aws_lb" "ha-dev" {
-  name                       = "hadev-vault-load-balancer"
+resource "aws_lb" "consul_alb" {
+  name                       = "hadev-consul-load-balancer"
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.load_balancer_sg.id]
@@ -17,15 +17,15 @@ resource "aws_lb" "ha-dev" {
   }
 }
 
-resource "aws_lb_target_group" "vault_alb_tg" {
-  name     = "hadev-vault-load-balancer-tg"
-  port     = 8200
+resource "aws_lb_target_group" "consul_alb_tg" {
+  name     = "consul-load-balancer-tg"
+  port     = 8085
   protocol = "HTTP"
   vpc_id   = module.vpc.vpc_id[0]
 
   health_check {
     interval            = 30
-    path                = "/sys/health"
+    path                = "/health"
     protocol            = "HTTP"
     timeout             = 5
     healthy_threshold   = 2
@@ -35,13 +35,13 @@ resource "aws_lb_target_group" "vault_alb_tg" {
 }
 
 resource "aws_lb_listener" "front_end" {
-  load_balancer_arn = aws_lb.ha-dev.arn
-  port              = "8200"
+  load_balancer_arn = aws_lb.consul_alb.arn
+  port              = "8085"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.vault_alb_tg.arn
+    target_group_arn = aws_lb_target_group.consul_alb_tg.arn
   }
 }
 
@@ -50,12 +50,11 @@ resource "aws_security_group" "load_balancer_sg" {
   vpc_id = module.vpc.vpc_id[0]
 
   ingress {
-    from_port   = 8200
-    to_port     = 8200
+    from_port   = 8085
+    to_port     = 8085
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   egress {
     from_port   = 0
     to_port     = 0

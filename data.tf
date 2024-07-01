@@ -38,7 +38,7 @@ data "template_file" "consul_install" {
     node_name                 = var.node_name
     datacenter                = var.datacenter
     bootstrap_expect          = var.bootstrap_expect
-    # retry_join               = var.retry_join
+    consul_zip                = var.consul_zip
   }
 }
 

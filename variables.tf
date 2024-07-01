@@ -364,7 +364,7 @@ variable "bootstrap_expect" {
   type        = number
 }
 
-# variable "retry_join" {
-#   description = "Address to retry joining the Consul cluster"
-#   type        = string
-# }
+variable "consul_zip" {
+  description = "hashicorp consul zip url file"
+  type        = string
+}

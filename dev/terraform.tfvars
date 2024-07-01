@@ -11,8 +11,8 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "consul-dev-cluster-main"
-launch_template_name        = "launch-template-consul-cluster-main"
+name                        = "consul-dev-cluster"
+launch_template_name        = "launch-template-consul-cluster"
 launch_template_id          = null
 create_iam_instance_profile = false
 
@@ -22,7 +22,7 @@ launch_template_version = "$Latest"
 # iam_role_name                        = "ha-dev-iam-role"
 create_launch_template               = true
 launch_template_use_name_prefix      = true
-launch_template_description          = "ha-dev consul launch template description"
+launch_template_description          = "hadev consul launch template description"
 ebs_optimized                        = true
 image_id                             = "ami-04b70fa74e45c3917"
 key_name                             = "service-key"

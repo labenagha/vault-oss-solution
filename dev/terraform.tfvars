@@ -7,12 +7,12 @@ state_bucket_name        = "ha-vault-dev"
 
 
 #######################################
-##### AutoScaling Configurations ######
+##### Consul AutoScaling Configurations ######
 #######################################
 
 create                      = true
-name                        = "vault-dev-cluster-main"
-launch_template_name        = "launch-template-vault-cluster-main"
+name                        = "consul-dev-cluster-main"
+launch_template_name        = "launch-template-consul-cluster-main"
 launch_template_id          = null
 create_iam_instance_profile = false
 
@@ -22,7 +22,7 @@ launch_template_version = "$Latest"
 # iam_role_name                        = "ha-dev-iam-role"
 create_launch_template               = true
 launch_template_use_name_prefix      = true
-launch_template_description          = "ha-dev vault launch template description"
+launch_template_description          = "ha-dev consul launch template description"
 ebs_optimized                        = true
 image_id                             = "ami-04b70fa74e45c3917"
 key_name                             = "service-key"
@@ -31,7 +31,6 @@ security_groups                      = ["sg-0904c5d1fde7777ff", "sg-0ced9f962e6a
 instance_initiated_shutdown_behavior = "stop"
 block_device_mappings                = []
 instance_type                        = "t3.medium"
-
 metadata_options = {
   http_endpoint               = "enabled",
   http_tokens                 = "optional",
@@ -39,18 +38,16 @@ metadata_options = {
   http_protocol_ipv6          = "disabled",
   instance_metadata_tags      = "disabled"
 }
-
 enable_monitoring = true
 tags = {
   Environment = "Dev",
-  Project     = "Vault-OSS"
+  Project     = "consul-OSS"
 }
 
 
 #######################################
-##### AutoScaling group ###############
+##### Consul AutoScaling group ###############
 #######################################
-
 ignore_desired_capacity_changes = false
 use_name_prefix                 = false
 use_mixed_instances_policy      = false
@@ -101,8 +98,6 @@ create_scaling_policy = true
 #############################################
 ########## Consul userdata variables ########
 #############################################
-
-# user                      = "consul"
 consul_version            = "1.9.5"
 aws_access_key_id         = "AKIAS5NG5ALSSPZOE4X5"
 aws_default_region        = "us-west-2"

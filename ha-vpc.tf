@@ -13,7 +13,7 @@ module "vpc" {
 
   security_group_ingress = [
     {
-      description = "HA Vault access from VPC"
+      description = "HA SSH Vault access from VPC"
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
@@ -34,11 +34,18 @@ module "vpc" {
       cidr_blocks = "18.209.226.207/32"
     },
     {
-      description     = "HTTP Vault access from VPC"
+      description     = "HTTP Consul access from VPC"
       from_port       = 8200
       to_port         = 8200
       protocol        = "tcp"
       security_groups = aws_security_group.load_balancer_sg.id
+    },
+    {
+      description     = "HTTP Vault access from VPC"
+      from_port       = 8200
+      to_port         = 8200
+      protocol        = "tcp"
+      security_groups = "0.0.0.0/0"
     },
     {
       description     = "HTTP Vault access from VPC"
@@ -58,8 +65,8 @@ module "vpc" {
   ]
 
   tags = {
-    Name        = "ha-dev-vault-sg"
+    Name        = "hadevsg"
     Terraform   = "true"
-    Environment = "ha-dev-vault"
+    Environment = "hadev"
   }
 }

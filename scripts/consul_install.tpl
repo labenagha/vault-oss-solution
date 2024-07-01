@@ -7,6 +7,7 @@ BIN_DIR="/usr/local/bin/$USER"
 consul_version="${consul_version}"
 USER_SYSTEMD_CONFIG_PATH="/etc/systemd/system/$USER.service"
 
+
 export AWS_ACCESS_KEY_ID="${aws_access_key_id}"
 export AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 export AWS_DEFAULT_REGION="${aws_default_region}"
@@ -14,13 +15,13 @@ export AWS_DEFAULT_REGION="${aws_default_region}"
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
 
 CONSUL_ZIP="$USER_${consul_version}_linux_amd64.zip"
-curl -O "https://releases.hashicorp.com/$USER/${consul_version}/${CONSUL_ZIP}"
-sudo unzip "${CONSUL_ZIP}" -d /usr/local/bin/
-rm "${CONSUL_ZIP}"
+curl -O "https://releases.hashicorp.com/$USER/${consul_version}/$CONSUL_ZIP"
+sudo unzip "$CONSUL_ZIP" -d /usr/local/bin/
+rm "$CONSUL_ZIP"
 
-sudo mkdir -p "${BIN_DIR}"
-sudo mv /usr/local/bin/$USER "${BIN_DIR}"
-sudo ln -s "${BIN_DIR}/$USER" /usr/bin/$USER
+sudo mkdir -p "$BIN_DIR"
+sudo mv /usr/local/bin/$USER "$BIN_DIR"
+sudo ln -s "$BIN_DIR/$USER" /usr/bin/$USER
 
 sudo useradd --system --home /etc/$USER.d --shell /bin/false $USER
 sudo mkdir --parents /opt/$USER /etc/$USER.d
@@ -46,7 +47,7 @@ sudo tee /usr/local/etc/$USER/$USER_s1.json > /dev/null << EOF
 }
 EOF
 
-sudo tee "${USER_SYSTEMD_CONFIG_PATH}" > /dev/null << EOF
+sudo tee "$USER_SYSTEMD_CONFIG_PATH" > /dev/null << EOF
 ### BEGIN INIT INFO
 # Provides:          $USER
 # Required-Start:    $local_fs $remote_fs

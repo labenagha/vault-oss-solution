@@ -16,6 +16,7 @@ echo "datacenter=${datacenter}"
 echo "consul_version=${consul_version}"
 echo "bootstrap_expect=${bootstrap_expect}"
 echo "instance_ip_address=${instance_ip_address}"
+echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 
 
 instance_ip_address=$(curl --silent --location "$ec2_instance_metadata_url/local-ipv4")

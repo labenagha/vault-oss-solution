@@ -4,7 +4,6 @@ set -x
 
 USER="consul"
 BIN_DIR="/usr/local/bin/$USER"
-consul_version="${consul_version}"
 USER_SYSTEMD_CONFIG_PATH="/etc/systemd/system/$USER.service"
 
 
@@ -12,10 +11,17 @@ export AWS_ACCESS_KEY_ID="${aws_access_key_id}"
 export AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
 export AWS_DEFAULT_REGION="${aws_default_region}"
 
-instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
+echo "node_name=${node_name}"
+echo "datacenter=${datacenter}"
+echo "consul_version=${consul_version}"
+echo "bootstrap_expect=${bootstrap_expect}"
+echo "instance_ip_address=${instance_ip_address}"
 
-CONSUL_ZIP="$USER_${consul_version}_linux_amd64.zip"
-curl -O "https://releases.hashicorp.com/$USER/${consul_version}/$CONSUL_ZIP"
+
+instance_ip_address=$(curl --silent --location "$ec2_instance_metadata_url/local-ipv4")
+
+CONSUL_ZIP="$USER_$consul_version_linux_amd64.zip"
+curl -O "https://releases.hashicorp.com/$USER/$consul_version/$CONSUL_ZIP"
 sudo unzip "$CONSUL_ZIP" -d /usr/local/bin/
 rm "$CONSUL_ZIP"
 
@@ -32,14 +38,14 @@ sudo mkdir -p /usr/local/etc/$USER
 sudo tee /usr/local/etc/$USER/$USER_s1.json > /dev/null << EOF
 {
   "server": true,
-  "node_name": "${node_name}",
-  "datacenter": "${datacenter}",
+  "node_name": "$node_name",
+  "datacenter": "$datacenter",
   "data_dir": "/var/$USER/data",
   "bind_addr": "0.0.0.0",
   "client_addr": "0.0.0.0",
-  "advertise_addr": "${instance_ip_address}",
-  "bootstrap_expect": ${bootstrap_expect},
-  "retry_join": ["${instance_ip_address}"],
+  "advertise_addr": "$instance_ip_address}",
+  "bootstrap_expect": $bootstrap_expect,
+  "retry_join": ["$instance_ip_address"],
   "ui": true,
   "log_level": "DEBUG",
   "enable_syslog": true,

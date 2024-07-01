@@ -6,6 +6,8 @@ USER="consul"
 BIN_DIR="/usr/local/bin/$USER"
 USER_SYSTEMD_CONFIG_PATH="/etc/systemd/system/$USER.service"
 
+sudo apt-get update
+sudo apt-get install -y unzip curl
 
 export AWS_ACCESS_KEY_ID="${aws_access_key_id}"
 export AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"

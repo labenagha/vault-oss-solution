@@ -100,7 +100,7 @@ create_scaling_policy = true
 #############################################
 consul_version            = "1.9.5"
 aws_access_key_id         = "AKIAS5NG5ALSSPZOE4X5"
-aws_default_region        = "us-west-2"
+aws_default_region        = "us-east-1"
 ec2_instance_metadata_url = "http://169.254.169.254/latest/meta-data"
 node_name                 = "consul-node-1"
 datacenter                = "dc1"

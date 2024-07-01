@@ -24,12 +24,12 @@ echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
 
 
-sudo mkdir -p "$BIN_DIR"
-curl -O "$consul_zip"
+sudo mkdir -p "$BIN_DIR" && cd "$BIN_DIR"
+sudo curl -O "$consul_zip"
 sudo unzip "$consul_zip" -d /usr/local/bin/
-rm "$consul_zip"
+sudo rm "$consul_zip"
 
-sudo mv /usr/local/bin/$USER "$BIN_DIR"
+sudo mv $USER "$BIN_DIR"
 sudo ln -s "$BIN_DIR/$USER" /usr/bin/$USER
 
 sudo useradd --system --home /etc/$USER.d --shell /bin/false $USER

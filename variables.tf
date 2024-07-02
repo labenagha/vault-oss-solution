@@ -357,3 +357,8 @@ variable "consul_zip" {
   description = "hashicorp consul zip url file"
   type        = string
 }
+
+variable "consul_url" {
+  type        = string
+  description = "Consul TAR file to be downloaded"
+}

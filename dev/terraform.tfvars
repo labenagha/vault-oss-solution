@@ -105,4 +105,5 @@ node_name                 = "consul-node-1"
 datacenter                = "dc1"
 bootstrap_expect          = 2
 consul_zip                = "consul_1.19.5_linux_amd64.zip"
+consul_url                = "https://releases.hashicorp.com/consul/1.19.5/consul_1.19.5_linux_amd64.zip"
 

@@ -37,6 +37,7 @@ data "template_file" "consul_install" {
     datacenter                = var.datacenter
     bootstrap_expect          = var.bootstrap_expect
     consul_zip                = var.consul_zip
+    consul_url                = var.consul_url
   }
 }
 

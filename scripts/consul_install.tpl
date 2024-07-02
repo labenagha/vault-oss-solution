@@ -23,11 +23,11 @@ instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/loc
 
 CONSUL_ZIP="${consul_zip}"
 curl -O "${consul_url}"
-sudo unzip "$CONSUL_ZIP" -d /usr/local/bin/
+sudo unzip "$CONSUL_ZIP"
 rm "$CONSUL_ZIP"
 
 sudo mkdir -p "$BIN_DIR"
-sudo mv /usr/local/bin/consul "$BIN_DIR"
+sudo mv $USER "$BIN_DIR"
 sudo ln -s "$BIN_DIR" /usr/bin/consul
 
 sudo useradd --system --home /etc/$USER.d --shell /bin/false $USER

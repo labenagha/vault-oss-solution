@@ -20,7 +20,6 @@ echo "consul_zip=${consul_zip}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
-echo "instance_ip_address=${instance_ip_address}"
 
 CONSUL_ZIP="${consul_zip}"
 curl -O "${consul_zip}"

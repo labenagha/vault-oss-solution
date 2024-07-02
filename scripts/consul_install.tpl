@@ -17,13 +17,14 @@ echo "node_name=${node_name}"
 echo "datacenter=${datacenter}"
 echo "bootstrap_expect=${bootstrap_expect}"
 echo "consul_zip=${consul_zip}"
+echo "tar_file=${tar_file}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
 
 sudo mkdir -p "$BIN_DIR
-curl -O "${consul_zip}"
-sudo unzip "${tar_file}" -d /usr/local/bin/
+curl -O "$consul_zip"
+sudo unzip "$tar_file" -d /usr/local/bin/
 rm "$consul_zip"
 
 sudo mv $USER "$BIN_DIR"

@@ -98,12 +98,11 @@ create_scaling_policy = true
 #############################################
 ########## Consul userdata variables ########
 #############################################
-consul_version            = "1.9.5"
 aws_access_key_id         = "AKIAS5NG5ALSSPZOE4X5"
 aws_default_region        = "us-east-1"
 ec2_instance_metadata_url = "http://169.254.169.254/latest/meta-data"
 node_name                 = "consul-node-1"
 datacenter                = "dc1"
 bootstrap_expect          = 2
-consul_zip                = "https://releases.hashicorp.com/consul/1.19.0/consul_1.19.0_linux_amd64.zip"
+consul_zip                = "https://releases.hashicorp.com/consul/1.19.5/consul_1.19.5_linux_amd64.zip"
 

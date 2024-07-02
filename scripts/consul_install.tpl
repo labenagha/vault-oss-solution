@@ -15,14 +15,12 @@ export AWS_DEFAULT_REGION="${aws_default_region}"
 
 echo "node_name=${node_name}"
 echo "datacenter=${datacenter}"
-# echo "consul_zip=${consul_zip}"
-echo "consul_version=${consul_version}"
 echo "bootstrap_expect=${bootstrap_expect}"
-echo "consul_zip=consul_${consul_version}_linux_amd64.zip"
+echo "consul_zip="${consul_zip}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
-curl -O "https://releases.hashicorp.com/consul/$consul_version/$consul_zip"
+curl -O "${consul_zip}"
 sudo unzip "$consul_zip" -d /usr/local/bin/
 rm "$consul_zip"
 

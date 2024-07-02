@@ -29,8 +29,6 @@ data "template_file" "gh_runner_install" {
 data "template_file" "consul_install" {
   template = file("${path.module}/scripts/consul_install.tpl")
   vars = {
-    # user                      = var.user
-    consul_version            = var.consul_version
     aws_access_key_id         = var.aws_access_key_id
     aws_secret_access_key     = var.aws_secret_access_key
     aws_default_region        = var.aws_default_region
@@ -38,11 +36,8 @@ data "template_file" "consul_install" {
     node_name                 = var.node_name
     datacenter                = var.datacenter
     bootstrap_expect          = var.bootstrap_expect
-    # retry_join               = var.retry_join
   }
 }
-
-
 
 data "template_file" "user_data" {
   template = file("${path.module}/scripts/nginx_install.sh")

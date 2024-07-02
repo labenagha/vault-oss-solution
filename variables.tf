@@ -317,17 +317,6 @@ variable "scaling_policies" {
 #############################################
 ########## Consul userdata variables ########
 #############################################
-
-# variable "user" {
-#   description = "The user for the Consul installation"
-#   type        = string
-# }
-
-variable "consul_version" {
-  description = "The version of Consul to install"
-  type        = string
-}
-
 variable "aws_access_key_id" {
   description = "AWS Access Key ID"
   type        = string
@@ -363,8 +352,3 @@ variable "bootstrap_expect" {
   description = "Number of server nodes to wait for before bootstrapping"
   type        = number
 }
-
-# variable "retry_join" {
-#   description = "Address to retry joining the Consul cluster"
-#   type        = string
-# }

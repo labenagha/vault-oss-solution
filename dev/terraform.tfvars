@@ -11,8 +11,8 @@ state_bucket_name        = "ha-vault-dev"
 #######################################
 
 create                      = true
-name                        = "consul-dev-cluster-main"
-launch_template_name        = "launch-template-consul-cluster-main"
+name                        = "consul-dev-cluster"
+launch_template_name        = "launch-template-consul-cluster"
 launch_template_id          = null
 create_iam_instance_profile = false
 
@@ -22,7 +22,7 @@ launch_template_version = "$Latest"
 # iam_role_name                        = "ha-dev-iam-role"
 create_launch_template               = true
 launch_template_use_name_prefix      = true
-launch_template_description          = "ha-dev consul launch template description"
+launch_template_description          = "hadev consul launch template description"
 ebs_optimized                        = true
 image_id                             = "ami-04b70fa74e45c3917"
 key_name                             = "service-key"
@@ -61,7 +61,7 @@ wait_for_elb_capacity           = 2
 wait_for_capacity_timeout       = "5m"
 default_cooldown                = 300
 protect_from_scale_in           = false
-target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/hadev-vault-load-balancer-tg/236ad62260434695"]
+target_group_arns               = ["arn:aws:elasticloadbalancing:us-east-1:200602878693:targetgroup/consul-load-balancer-tg/83e86bf0a92a7d71"]
 placement_group                 = null
 health_check_type               = "EC2"
 health_check_grace_period       = 120
@@ -98,11 +98,9 @@ create_scaling_policy = true
 #############################################
 ########## Consul userdata variables ########
 #############################################
-consul_version            = "1.9.5"
 aws_access_key_id         = "AKIAS5NG5ALSSPZOE4X5"
-aws_default_region        = "us-west-2"
+aws_default_region        = "us-east-1"
 ec2_instance_metadata_url = "http://169.254.169.254/latest/meta-data"
 node_name                 = "consul-node-1"
 datacenter                = "dc1"
 bootstrap_expect          = 2
-

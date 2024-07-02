@@ -5,7 +5,14 @@ set -x
 USER="consul"
 BIN_DIR="/usr/local/bin/$USER"
 USER_SYSTEMD_CONFIG_PATH="/etc/systemd/system/$USER.service"
+CONSUL_VERSION="1.19.0"
+CONSUL_ZIP="consul_1.19.0_linux_amd64.zip"
+CONSUL_URL="https://releases.hashicorp.com/consul/$CONSUL_VERSION/$CONSUL_ZIP"
 
+sudo apt-get update
+sudo apt-get install -y unzip curl
+
+instance_ip_address=$(curl --silent --location "$ec2_instance_metadata_url/local-ipv4")
 
 export AWS_ACCESS_KEY_ID="${aws_access_key_id}"
 export AWS_SECRET_ACCESS_KEY="${aws_secret_access_key}"
@@ -13,32 +20,33 @@ export AWS_DEFAULT_REGION="${aws_default_region}"
 
 echo "node_name=${node_name}"
 echo "datacenter=${datacenter}"
-echo "consul_version=${consul_version}"
 echo "bootstrap_expect=${bootstrap_expect}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
-echo "instance_ip_address=$(curl --silent --location "$ec2_instance_metadata_url/local-ipv4")"
 
-CONSUL_ZIP="$USER_$consul_version_linux_amd64.zip"
-curl -O "https://releases.hashicorp.com/$USER/$consul_version/$CONSUL_ZIP"
-sudo unzip "$CONSUL_ZIP" -d /usr/local/bin/
+# Create directory for Consul
+sudo mkdir -p /usr/local/bin/consul
+
+# Download and unzip Consul
+curl -O "$CONSUL_URL"
+sudo unzip "$CONSUL_ZIP"
 rm "$CONSUL_ZIP"
 
-sudo mkdir -p "$BIN_DIR"
-sudo mv /usr/local/bin/$USER "$BIN_DIR"
-sudo ln -s "$BIN_DIR/$USER" /usr/bin/$USER
+# Move and link Consul binary
+sudo mv consul /usr/local/bin/consul
+sudo cp /usr/local/bin/consul/consul /usr/bin/consul
 
-sudo useradd --system --home /etc/$USER.d --shell /bin/false $USER
-sudo mkdir --parents /opt/$USER /etc/$USER.d
-sudo chown --recursive $USER:$USER /opt/$USER /etc/$USER.d
+# Create necessary directories and files
+sudo mkdir -p /var/consul/data
+sudo mkdir -p /usr/local/etc/consul
+sudo touch /usr/local/etc/consul/consul_s1.json
 
-sudo mkdir -p /var/$USER/data
-sudo mkdir -p /usr/local/etc/$USER
-sudo tee /usr/local/etc/$USER/$USER_s1.json > /dev/null << EOF
+# Create Consul configuration file
+sudo tee /usr/local/etc/consul/consul_s1.json > /dev/null << EOF
 {
   "server": true,
   "node_name": "$node_name",
   "datacenter": "$datacenter",
-  "data_dir": "/var/$USER/data",
+  "data_dir": "/var/consul/data",
   "bind_addr": "0.0.0.0",
   "client_addr": "0.0.0.0",
   "advertise_addr": "$instance_ip_address",
@@ -51,28 +59,33 @@ sudo tee /usr/local/etc/$USER/$USER_s1.json > /dev/null << EOF
 }
 EOF
 
+# Create PID file directory and file
+sudo mkdir -p /var/run/consul
+sudo touch /var/run/consul/consul-server.pid
+
+# Create systemd service file for Consul
 sudo tee "$USER_SYSTEMD_CONFIG_PATH" > /dev/null << EOF
 ### BEGIN INIT INFO
-# Provides:          $USER
-# Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
+# Provides:          consul
+# Required-Start:    \$local_fs \$remote_fs
+# Required-Stop:     \$local_fs \$remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: $USER agent
-# Description:       $USER service discovery framework
+# Short-Description: Consul agent
+# Description:       Consul service discovery framework
 ### END INIT INFO
 
 [Unit]
-Description=$USER server agent
+Description=Consul server agent
 Requires=network-online.target
 After=network-online.target
 
 [Service]
-PIDFile=/var/run/$USER/$USER-server.pid
+PIDFile=/var/run/consul/consul-server.pid
 PermissionsStartOnly=true
-ExecStart=/usr/local/bin/$USER agent \
-    -config-file=/usr/local/etc/$USER/$USER_s1.json \
-    -pid-file=/var/run/$USER/$USER-server.pid
+ExecStart=/usr/local/bin/consul/consul agent \
+    -config-file=/usr/local/etc/consul/consul_s1.json \
+    -pid-file=/var/run/consul/consul-server.pid
 ExecReload=/bin/kill -HUP \$MAINPID
 KillMode=process
 KillSignal=SIGTERM
@@ -83,6 +96,7 @@ RestartSec=42s
 WantedBy=multi-user.target
 EOF
 
+# Reload systemd, start and check the status of Consul service
 sudo systemctl daemon-reload
-sudo systemctl restart $USER
-sudo systemctl status $USER
+sudo systemctl restart consul
+sudo systemctl status consul

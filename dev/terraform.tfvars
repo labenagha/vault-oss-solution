@@ -104,5 +104,6 @@ ec2_instance_metadata_url = "http://169.254.169.254/latest/meta-data"
 node_name                 = "consul-node-1"
 datacenter                = "dc1"
 bootstrap_expect          = 2
+tar_file                  = "consul_1.19.5_linux_amd64.zip"
 consul_zip                = "https://releases.hashicorp.com/consul/1.19.5/consul_1.19.5_linux_amd64.zip"
 

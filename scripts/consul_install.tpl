@@ -20,8 +20,10 @@ echo "consul_zip=${consul_zip}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
+
+sudo mkdir -p "$BIN_DIR
 curl -O "${consul_zip}"
-sudo unzip "$consul_zip" -d /usr/local/bin/
+sudo unzip "${tar_file}" -d /usr/local/bin/
 rm "$consul_zip"
 
 sudo mv $USER "$BIN_DIR"

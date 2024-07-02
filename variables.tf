@@ -364,7 +364,7 @@ variable "bootstrap_expect" {
   type        = number
 }
 
-variable "consul_zip" {
-  description = "hashicorp consul zip url file"
-  type        = string
-}
+# variable "consul_zip" {
+#   description = "hashicorp consul zip url file"
+#   type        = string
+# }

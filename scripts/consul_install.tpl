@@ -16,7 +16,7 @@ export AWS_DEFAULT_REGION="${aws_default_region}"
 echo "node_name=${node_name}"
 echo "datacenter=${datacenter}"
 echo "bootstrap_expect=${bootstrap_expect}"
-echo "consul_zip="${consul_zip}"
+echo "consul_zip=${consul_zip}"
 echo "ec2_instance_metadata_url=${ec2_instance_metadata_url}"
 
 instance_ip_address=$(curl --silent --location "${ec2_instance_metadata_url}/local-ipv4")
@@ -33,6 +33,7 @@ sudo chown --recursive $USER:$USER /opt/$USER /etc/$USER.d
 
 sudo mkdir -p /var/$USER/data
 sudo mkdir -p /usr/local/etc/$USER
+
 sudo tee /usr/local/etc/$USER/$USER_s1.json > /dev/null << EOF
 {
   "server": true,
@@ -54,8 +55,8 @@ EOF
 sudo tee "$USER_SYSTEMD_CONFIG_PATH" > /dev/null << EOF
 ### BEGIN INIT INFO
 # Provides:          $USER
-# Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
+# Required-Start:    \$local_fs \$remote_fs
+# Required-Stop:     \$local_fs \$remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: $USER agent

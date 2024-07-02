@@ -42,8 +42,6 @@ data "template_file" "consul_install" {
   }
 }
 
-
-
 data "template_file" "user_data" {
   template = file("${path.module}/scripts/nginx_install.sh")
   vars = {
